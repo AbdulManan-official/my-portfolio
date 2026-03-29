@@ -4,16 +4,16 @@ import { Code2, Smartphone, Globe, Zap } from "lucide-react";
 
 const HIGHLIGHTS = [
   { Icon: Code2,      title: "50+ Apps Built", desc: "Utility, wellness & social-good",  accent: "#0284c7" },
-  { Icon: Smartphone, title: "iOS & Android",   desc: "True cross-platform expertise",    accent: "#7c3aed" },
-  { Icon: Globe,      title: "Global Clients",  desc: "Delivering remotely worldwide",    accent: "#db2777" },
-  { Icon: Zap,        title: "Full Ownership",  desc: "Concept → design → deployment",   accent: "#059669" },
+  { Icon: Smartphone, title: "iOS & Android",  desc: "True cross-platform expertise",    accent: "#7c3aed" },
+  { Icon: Globe,      title: "Global Clients", desc: "Delivering remotely worldwide",    accent: "#db2777" },
+  { Icon: Zap,        title: "Full Ownership", desc: "Concept → design → deployment",    accent: "#059669" },
 ];
 
-const TECHS = ["Flutter", "Dart", "Firebase", "Supabase"];
+const TECHS = ["Flutter", "React", "Firebase", "MongoDB"];
 
 const BIO = [
-  <>I&apos;m Abdul Manan — a Flutter developer based in Sialkot, Pakistan, currently working full-time at{" "}<strong style={{ color: "var(--text-primary)", fontWeight: 600 }}>Technosofts</strong>{" "}while taking on freelance projects on the side. I&apos;ve shipped 50+ apps across utility, wellness, spiritual, and e-commerce categories.</>,
-  <>I don&apos;t just write code — I think about user experience, performance, and long-term maintainability. My stack is{" "}<strong style={{ color: "var(--text-primary)", fontWeight: 600 }}>Flutter + Dart</strong>{" "}on the front,{" "}<strong style={{ color: "var(--text-primary)", fontWeight: 600 }}>Firebase & Supabase</strong>{" "}on the back.</>,
+  <>I&apos;m Abdul Manan — a Flutter developer based in Sialkot, Pakistan, currently working full-time at <strong className="bio-strong">Technosofts</strong> while taking on freelance projects on the side. I&apos;ve shipped 50+ apps across utility, wellness, spiritual, and e-commerce categories.</>,
+  <>I don&apos;t just write code — I think about user experience, performance, and long-term maintainability. My stack is <strong className="bio-strong">Flutter + Dart</strong> on the front, <strong className="bio-strong">Firebase & Supabase</strong> on the back.</>,
   <>When I&apos;m not building apps, I&apos;m planning the next one — currently expanding into a portfolio of SaaS products spanning health, productivity, and social good.</>,
 ];
 
@@ -29,125 +29,157 @@ export default function About() {
     if (!mounted || !ref.current) return;
     const obs = new IntersectionObserver(
       ([e]) => { if (e.isIntersecting) setVisible(true); },
-      { threshold: 0.1 }
+      { threshold: 0.15 }
     );
     obs.observe(ref.current);
     return () => obs.disconnect();
   }, [mounted]);
 
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || window.innerWidth < 1024) return; // Disable 3D mouse effect on mobile for performance
     const fn = (e: MouseEvent) => setMouse({
-      x: (e.clientX / window.innerWidth  - 0.5) * 8,
-      y: (e.clientY / window.innerHeight - 0.5) * 8,
+      x: (e.clientX / window.innerWidth  - 0.5) * 12,
+      y: (e.clientY / window.innerHeight - 0.5) * 12,
     });
     window.addEventListener("mousemove", fn);
     return () => window.removeEventListener("mousemove", fn);
   }, [mounted]);
 
-  if (!mounted) return <section id="about" style={{ background: "var(--bg-secondary)", minHeight: 400 }} />;
+  if (!mounted) return <section id="about" style={{ background: "var(--bg-secondary)", minHeight: "100vh" }} />;
 
   return (
     <>
       <style>{`
+        /* ── Theme Specific Toggles ── */
+        :root {
+          --about-glass-bg: rgba(15, 23, 42, 0.03);
+          --about-glass-border: rgba(15, 23, 42, 0.08);
+          --about-glass-hover: rgba(15, 23, 42, 0.06);
+        }
+        [data-theme="dark"] {
+          --about-glass-bg: rgba(255, 255, 255, 0.03);
+          --about-glass-border: rgba(255, 255, 255, 0.08);
+          --about-glass-hover: rgba(255, 255, 255, 0.06);
+        }
+
+        /* ── Reveal Animations ── */
         .about-reveal {
-          opacity: 0; transform: translateY(22px);
-          transition: opacity 0.65s ease, transform 0.65s ease;
+          opacity: 0; transform: translateY(30px);
+          transition: opacity 0.7s cubic-bezier(0.22, 1, 0.36, 1), transform 0.7s cubic-bezier(0.22, 1, 0.36, 1);
         }
         .about-reveal.in { opacity: 1; transform: translateY(0); }
 
         .about-left {
-          opacity: 0; transform: translateX(-28px);
-          transition: opacity 0.8s ease 0.1s, transform 0.8s ease 0.1s;
+          opacity: 0; transform: translateX(-40px);
+          transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.1s;
         }
         .about-left.in { opacity: 1; transform: translateX(0); }
 
         .about-right {
-          opacity: 0; transform: translateX(28px);
-          transition: opacity 0.8s ease 0.2s, transform 0.8s ease 0.2s;
+          opacity: 0; transform: translateX(40px);
+          transition: opacity 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s, transform 0.8s cubic-bezier(0.22, 1, 0.36, 1) 0.2s;
         }
         .about-right.in { opacity: 1; transform: translateX(0); }
 
-        /* ── Highlight card ── */
+        /* ── Highlight Cards ── */
         .about-card {
-          background: var(--bg-card);
-          border: 1px solid var(--border-subtle);
-          border-radius: 16px;
-          padding: 18px;
+          background: var(--about-glass-bg);
+          border: 1px solid var(--about-glass-border);
+          border-radius: 20px;
+          padding: 24px;
           cursor: default;
           position: relative;
           overflow: hidden;
-          transition: border-color 0.3s ease, transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+          backdrop-filter: blur(12px);
+          -webkit-backdrop-filter: blur(12px);
+          transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
         }
         .about-card::before {
           content: '';
           position: absolute; inset: 0;
           background: var(--card-accent-bg, transparent);
           opacity: 0;
-          transition: opacity 0.3s ease;
+          transition: opacity 0.4s ease;
           border-radius: inherit;
+          z-index: 0;
         }
-        .about-card:hover { transform: translateY(-4px) scale(1.02); }
+        .about-card:hover { transform: translateY(-6px) scale(1.02); }
         .about-card:hover::before { opacity: 1; }
+        
+        .about-card-content { position: relative; z-index: 1; }
+        
         .about-card .card-icon {
-          transition: transform 0.4s cubic-bezier(0.34,1.56,0.64,1), color 0.3s ease;
+          transition: transform 0.5s cubic-bezier(0.34,1.56,0.64,1), color 0.3s ease;
         }
-        .about-card:hover .card-icon { transform: scale(1.2) rotate(6deg); }
+        .about-card:hover .card-icon { transform: scale(1.2) rotate(10deg); }
 
-        /* ── Card title — always dark/readable ── */
+        /* FIXED: Text colors adapt to light/dark mode perfectly now */
         .about-card-title {
           font-family: var(--font-display);
-          font-weight: 700;
-          font-size: 13.5px;
-          /* Same rich dark color in both modes */
-          color: #0f172a;
-          margin-bottom: 3px;
+          font-weight: 800;
+          font-size: 15px;
+          color: var(--text-primary);
+          margin-bottom: 6px;
+          letter-spacing: -0.01em;
+          transition: color 0.3s ease;
         }
-        [data-theme="dark"] .about-card-title {
-          color: #0f172a;
+        .about-card-desc {
+          font-size: 13px; color: var(--text-muted);
+          font-family: var(--font-body); lineHeight: 1.6;
+          transition: color 0.3s ease;
         }
+        .about-card:hover .about-card-desc { color: var(--text-secondary); }
 
-        /* ── Tech badge ── */
+        /* ── Tech Badges ── */
         .about-tech-badge {
-          font-size: 11px;
+          font-size: 12px;
           font-weight: 700;
           font-family: var(--font-display);
-          padding: 5px 14px;
+          padding: 6px 16px;
           border-radius: 100px;
-          background: var(--pill-bg, var(--bg-glass));
-          border: 1px solid var(--pill-border, var(--border-subtle));
-          color: var(--pill-text, var(--text-primary));
-          transition: transform 0.35s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+          background: var(--about-glass-bg);
+          border: 1px solid var(--about-glass-border);
+          color: var(--text-primary);
+          transition: all 0.4s cubic-bezier(0.34,1.56,0.64,1);
           position: absolute;
           white-space: nowrap;
-          backdrop-filter: blur(12px);
+          backdrop-filter: blur(16px);
+          -webkit-backdrop-filter: blur(16px);
+          box-shadow: 0 4px 20px rgba(0,0,0,0.05);
         }
         .about-tech-badge:hover {
-          transform: translate(-50%,-50%) scale(1.12) !important;
+          transform: translate(-50%,-50%) scale(1.15) !important;
+          border-color: var(--accent-cyan);
+          color: var(--accent-cyan);
+          background: var(--about-glass-hover);
+          box-shadow: 0 8px 25px rgba(2, 132, 199, 0.2);
         }
 
-        /* ── Bio paragraph ── */
+        /* ── Bio Text & Hover Line ── */
         .bio-para {
-          font-size: 14.5px;
-          line-height: 1.8;
+          font-size: 15.5px;
+          line-height: 1.85;
           color: var(--text-secondary);
           font-family: var(--font-body);
           position: relative;
-          padding-left: 16px;
-          transition: color 0.3s ease;
+          padding-left: 20px;
+          transition: color 0.3s ease, transform 0.3s ease;
         }
         .bio-para::before {
           content: '';
           position: absolute;
-          left: 0; top: 8px; bottom: 8px;
-          width: 2px; border-radius: 1px;
-          background: var(--border-glow);
-          transition: background 0.3s ease;
+          left: 0; top: 6px; bottom: 6px;
+          width: 3px; border-radius: 3px;
+          background: var(--about-glass-border);
+          transition: all 0.3s ease;
         }
-        .bio-para:hover { color: var(--text-primary); }
-        .bio-para:hover::before { background: var(--accent-cyan); }
+        .bio-para:hover { color: var(--text-primary); transform: translateX(4px); }
+        .bio-para:hover::before { background: linear-gradient(180deg, #0284c7, #7c3aed); box-shadow: 0 0 10px rgba(2, 132, 199, 0.4); }
+        
+        .bio-strong { color: var(--text-primary); font-weight: 700; transition: color 0.3s ease; }
+        .bio-para:hover .bio-strong { color: var(--accent-cyan); }
 
-        /* ── Section heading "Me" — same gradient both modes ── */
+        /* ── Gradients ── */
         .about-heading-gradient {
           background: linear-gradient(135deg, #0284c7, #7c3aed);
           -webkit-background-clip: text;
@@ -155,79 +187,72 @@ export default function About() {
           background-clip: text;
         }
 
-        /* ── "what gets built" — same dark gradient both modes ── */
-        .about-sub-gradient {
-          background: linear-gradient(135deg, #0284c7, #7c3aed);
-          -webkit-background-clip: text;
-          -webkit-text-fill-color: transparent;
-          background-clip: text;
-        }
-
-        /* ── Code2 icon background — same in both modes ── */
+        /* ── Center 3D Icon Circle ── */
         .about-icon-circle {
           background: linear-gradient(135deg, #0284c7, #7c3aed);
-          box-shadow: 0 0 0 8px rgba(2,132,199,0.1),
-                      0 0 60px rgba(2,132,199,0.2),
-                      0 0 120px rgba(124,58,237,0.15);
+          box-shadow: 0 0 0 10px rgba(2,132,199,0.1),
+                      0 0 40px rgba(2,132,199,0.3),
+                      0 0 100px rgba(124,58,237,0.2);
+          animation: pulseGlow 4s infinite alternate;
+        }
+        @keyframes pulseGlow {
+          0% { box-shadow: 0 0 0 10px rgba(2,132,199,0.1), 0 0 40px rgba(2,132,199,0.2); }
+          100% { box-shadow: 0 0 0 15px rgba(2,132,199,0.15), 0 0 60px rgba(124,58,237,0.4); }
         }
       `}</style>
 
-      <section id="about" ref={ref} className="relative py-24 overflow-hidden grid-bg"
+      <section id="about" ref={ref} className="relative py-20 lg:py-28 overflow-hidden grid-bg"
         style={{ background: "var(--bg-secondary)" }}>
 
-        {/* Orbs */}
-        <div className="absolute top-0 left-0 w-96 h-96 rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(circle,rgba(2,132,199,0.06),transparent)", filter: "blur(70px)" }} />
-        <div className="absolute bottom-0 right-0 w-96 h-96 rounded-full pointer-events-none"
-          style={{ background: "radial-gradient(circle,rgba(124,58,237,0.06),transparent)", filter: "blur(70px)" }} />
+        {/* Ambient Glow Orbs */}
+        <div className="absolute top-0 left-0 w-[500px] h-[500px] rounded-full pointer-events-none hidden md:block"
+          style={{ background: "radial-gradient(circle,rgba(2,132,199,0.05),transparent)", filter: "blur(80px)" }} />
+        <div className="absolute bottom-0 right-0 w-[500px] h-[500px] rounded-full pointer-events-none hidden md:block"
+          style={{ background: "radial-gradient(circle,rgba(124,58,237,0.05),transparent)", filter: "blur(80px)" }} />
 
         <div className="relative z-10 max-w-7xl mx-auto px-5 lg:px-8">
 
           {/* Header */}
-          <div className={`about-reveal ${visible ? "in" : ""} text-center mb-16`}>
+          <div className={`about-reveal ${visible ? "in" : ""} text-center mb-16 lg:mb-24`}>
             <div className="section-label justify-center mb-4">The person behind the apps</div>
-            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(2rem,4vw,3rem)", color: "var(--text-primary)" }}>
+            <h2 style={{ fontFamily: "var(--font-display)", fontWeight: 800, fontSize: "clamp(2.2rem,5vw,3.5rem)", color: "var(--text-primary)", letterSpacing: "-0.02em" }}>
               About <span className="about-heading-gradient">Me</span>
             </h2>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+          <div className="grid lg:grid-cols-2 gap-16 lg:gap-20 items-center">
 
-            {/* ── LEFT — 3D Avatar ── */}
+            {/* ── LEFT — 3D Avatar Area ── */}
             <div className={`about-left ${visible ? "in" : ""}`}>
-              <div className="relative max-w-sm mx-auto aspect-square"
+              <div className="relative w-full max-w-[320px] sm:max-w-sm mx-auto aspect-square"
                 style={{
                   transform: `rotateY(${mouse.x}deg) rotateX(${-mouse.y}deg)`,
-                  transition: "transform 0.4s ease-out",
-                  perspective: "800px",
+                  transition: "transform 0.2s ease-out",
+                  perspective: "1000px",
                 }}>
 
                 {/* Outer spinning ring */}
                 <div className="absolute inset-0 rounded-full"
-                  style={{ border: "1px solid var(--border-glow)", animation: "rotate-slow 20s linear infinite" }}>
-                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 rounded-full"
-                    style={{ background: "#0284c7", boxShadow: "0 0 14px #0284c7" }} />
+                  style={{ border: "1.5px solid var(--about-glass-border)", animation: "rotate-slow 25s linear infinite" }}>
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 w-4 h-4 rounded-full"
+                    style={{ background: "#0284c7", boxShadow: "0 0 16px #0284c7" }} />
                 </div>
 
                 {/* Inner reverse ring */}
-                <div className="absolute inset-5 rounded-full"
-                  style={{ border: "1px solid var(--border-subtle)", animation: "rotate-slow 13s linear infinite reverse" }}>
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-2.5 h-2.5 rounded-full"
-                    style={{ background: "#7c3aed", boxShadow: "0 0 12px #7c3aed" }} />
+                <div className="absolute inset-8 rounded-full"
+                  style={{ border: "1.5px dashed var(--about-glass-border)", animation: "rotate-slow 15s linear infinite reverse" }}>
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 w-3 h-3 rounded-full"
+                    style={{ background: "#7c3aed", boxShadow: "0 0 16px #7c3aed" }} />
                 </div>
 
-                {/* Dashed ring */}
-                <div className="absolute inset-[-12px] rounded-full pointer-events-none"
-                  style={{ border: "1px dashed var(--border-subtle)", opacity: 0.5 }} />
+                {/* Glow blob behind icon */}
+                <div className="absolute inset-12 rounded-full pointer-events-none"
+                  style={{ background: "radial-gradient(circle,rgba(2,132,199,0.15),rgba(124,58,237,0.1),transparent)", filter: "blur(25px)" }} />
 
-                {/* Glow blob */}
-                <div className="absolute inset-10 rounded-full pointer-events-none"
-                  style={{ background: "radial-gradient(circle,rgba(2,132,199,0.14),rgba(124,58,237,0.1),transparent)", filter: "blur(22px)" }} />
-
-                {/* Center icon circle — same gradient both modes */}
+                {/* Center icon circle */}
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="w-36 h-36 rounded-full flex items-center justify-center about-icon-circle">
-                    <Code2 className="w-14 h-14 text-white" strokeWidth={1.5} />
+                  <div className="w-32 h-32 sm:w-40 sm:h-40 rounded-full flex items-center justify-center about-icon-circle">
+                    <Code2 className="w-12 h-12 sm:w-16 sm:h-16 text-white" strokeWidth={1.5} />
                   </div>
                 </div>
 
@@ -235,7 +260,7 @@ export default function About() {
                 {TECHS.map((t, i) => {
                   const angles = [315, 45, 225, 135];
                   const a = (angles[i] * Math.PI) / 180;
-                  const r = 47;
+                  const r = 48; // Radius percentage
                   const x = 50 + r * Math.cos(a);
                   const y = 50 + r * Math.sin(a);
                   return (
@@ -247,7 +272,7 @@ export default function About() {
                         transform: "translate(-50%,-50%)",
                         animation: `float ${3.5 + i * 0.4}s ease-in-out ${i * 0.3}s infinite`,
                         opacity: visible ? 1 : 0,
-                        transition: `opacity 0.5s ease ${0.9 + i * 0.12}s`,
+                        transition: `opacity 0.6s ease ${0.8 + i * 0.15}s`,
                       }}
                     >
                       {t}
@@ -259,29 +284,30 @@ export default function About() {
 
             {/* ── RIGHT — Bio ── */}
             <div className={`about-right ${visible ? "in" : ""}`}
-              style={{ display: "flex", flexDirection: "column", gap: 28 }}>
+              style={{ display: "flex", flexDirection: "column", gap: 32 }}>
 
               {/* Label + heading */}
               <div>
-                <div className="section-label mb-3">Who I Am</div>
+                <div className="section-label mb-4">Who I Am</div>
                 <h3 style={{
-                  fontFamily: "var(--font-display)", fontWeight: 700,
-                  fontSize: "clamp(1.35rem,2.5vw,1.85rem)",
-                  color: "var(--text-primary)", lineHeight: 1.35,
+                  fontFamily: "var(--font-display)", fontWeight: 800,
+                  fontSize: "clamp(1.5rem,3vw,2.2rem)",
+                  color: "var(--text-primary)", lineHeight: 1.25,
+                  letterSpacing: "-0.02em"
                 }}>
                   A Flutter developer who cares about{" "}
-                  <span className="about-sub-gradient">what gets built</span>, not just how.
+                  <span className="about-heading-gradient">what gets built</span>, not just how.
                 </h3>
               </div>
 
               {/* Bio paragraphs */}
-              <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+              <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
                 {BIO.map((text, i) => (
                   <p key={i} className="bio-para"
                     style={{
                       opacity: visible ? 1 : 0,
-                      transform: visible ? "none" : "translateY(10px)",
-                      transition: `opacity 0.5s ease ${0.3 + i * 0.1}s, transform 0.5s ease ${0.3 + i * 0.1}s, color 0.3s ease`,
+                      transform: visible ? "none" : "translateY(15px)",
+                      transition: `opacity 0.6s ease ${0.3 + i * 0.1}s, transform 0.6s cubic-bezier(0.22, 1, 0.36, 1) ${0.3 + i * 0.1}s, color 0.3s ease, transform 0.3s ease`,
                     }}>
                     {text}
                   </p>
@@ -289,48 +315,45 @@ export default function About() {
               </div>
 
               {/* Divider */}
-              <div style={{ height: 1, background: "linear-gradient(90deg, var(--border-glow), transparent)" }} />
+              <div style={{ height: 1, background: "linear-gradient(90deg, var(--about-glass-border), transparent)" }} />
 
               {/* Highlight cards */}
-              <div className="grid grid-cols-2 gap-3">
+              <div className="grid sm:grid-cols-2 gap-4">
                 {HIGHLIGHTS.map((h, i) => (
                   <div
                     key={h.title}
                     className="about-card"
                     style={{
                       // @ts-ignore
-                      "--card-accent-bg": `${h.accent}10`,
+                      "--card-accent-bg": `${h.accent}0A`,
                       opacity: visible ? 1 : 0,
-                      transform: visible ? "none" : "scale(0.92) translateY(10px)",
-                      transition: `opacity 0.5s ease ${0.45 + i * 0.08}s, transform 0.5s ease ${0.45 + i * 0.08}s, border-color 0.3s ease, box-shadow 0.3s ease`,
+                      transform: visible ? "none" : "scale(0.92) translateY(15px)",
+                      transition: `opacity 0.6s ease ${0.45 + i * 0.1}s, transform 0.6s cubic-bezier(0.34,1.56,0.64,1) ${0.45 + i * 0.1}s, border-color 0.3s ease, box-shadow 0.3s ease`,
                     }}
                     onMouseEnter={e => {
                       const el = e.currentTarget as HTMLElement;
-                      el.style.borderColor = `${h.accent}55`;
-                      el.style.boxShadow = `0 12px 32px ${h.accent}20`;
+                      el.style.borderColor = `${h.accent}60`;
+                      el.style.boxShadow = `0 15px 35px ${h.accent}15`;
                     }}
                     onMouseLeave={e => {
                       const el = e.currentTarget as HTMLElement;
-                      el.style.borderColor = "var(--border-subtle)";
+                      el.style.borderColor = "var(--about-glass-border)";
                       el.style.boxShadow = "none";
                     }}
                   >
-                    <h.Icon
-                      size={22}
-                      className="card-icon"
-                      style={{ color: h.accent, marginBottom: 10 }}
-                    />
-                    {/* Title — dark in both modes */}
-                    <div className="about-card-title">{h.title}</div>
-                    <div style={{
-                      fontSize: 12, color: "var(--text-muted)",
-                      fontFamily: "var(--font-body)", lineHeight: 1.5,
-                    }}>
-                      {h.desc}
+                    <div className="about-card-content">
+                      <h.Icon
+                        size={26}
+                        className="card-icon"
+                        style={{ color: h.accent, marginBottom: 14 }}
+                      />
+                      <div className="about-card-title">{h.title}</div>
+                      <div className="about-card-desc">{h.desc}</div>
                     </div>
                   </div>
                 ))}
               </div>
+
             </div>
           </div>
         </div>

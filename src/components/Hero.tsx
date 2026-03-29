@@ -1,6 +1,6 @@
 "use client";
 import { useEffect, useState, useMemo, useRef } from "react";
-import { Github, Linkedin, Mail, Phone as PhoneIcon } from "lucide-react";
+import { Github, Linkedin, Mail, Phone as PhoneIcon, ArrowRight } from "lucide-react";
 
 /* ─── Data ─────────────────────────────────────────────────────────── */
 const STATS = [
@@ -17,7 +17,7 @@ const SOCIALS = [
 ];
 
 const SCREENS = [
-  { label: "Abdul Manan",              accent: "#63e4ff", image: "/images/my1.png",     fit: "cover", pos: "center center", isSplash: true  },
+  { label: "Abdul Manan",              accent: "#0284c7", image: "/images/my1.png",     fit: "cover", pos: "center center", isSplash: true  },
   { label: "Tasbeeh Max",              accent: "#a78bfa", image: "/images/tasbeeh.png", fit: "cover", pos: "top center",    isSplash: false },
   { label: "VPN Max",                  accent: "#67e8f9", image: "/images/vpnmax.png",  fit: "cover", pos: "top center",    isSplash: false },
   { label: "Video to Audio Converter", accent: "#6ee7b7", image: "/images/video.png",   fit: "cover", pos: "top center",    isSplash: false },
@@ -39,20 +39,15 @@ function SplashOverlay() {
   return (
     <div style={{
       position: "absolute", inset: 0, zIndex: 10,
-      background: "linear-gradient(180deg, rgba(0,0,0,0.18) 0%, rgba(0,0,0,0.55) 55%, rgba(0,8,24,0.92) 100%)",
+      background: "linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.4) 55%, rgba(0,8,24,0.95) 100%)",
       display: "flex", flexDirection: "column",
       alignItems: "center", justifyContent: "flex-end",
       padding: "0 18px 32px",
       pointerEvents: "none",
     }}>
-      <div style={{ width: 56, height: 3, borderRadius: 2, background: "linear-gradient(90deg, transparent, #63e4ff, transparent)", marginBottom: 12, opacity: 0.7 }} />
-      <div style={{ fontFamily: "var(--hero-font-display, sans-serif)", fontSize: 17, fontWeight: 800, letterSpacing: "-0.01em", color: "#fff", textAlign: "center", lineHeight: 1.2, textShadow: "0 2px 16px rgba(0,0,0,0.6)" }}>Abdul Manan</div>
-      <div style={{ fontFamily: "var(--hero-font-display, sans-serif)", fontSize: 9.5, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "#63e4ff", marginTop: 5, textShadow: "0 0 12px rgba(99,228,255,0.6)" }}>Flutter Developer</div>
-      <div style={{ display: "flex", gap: 5, marginTop: 14 }}>
-        {[0, 1, 2].map(i => (
-          <div key={i} style={{ width: i === 1 ? 18 : 5, height: 4, borderRadius: 3, background: i === 1 ? "#63e4ff" : "rgba(255,255,255,0.3)" }} />
-        ))}
-      </div>
+      <div style={{ width: 56, height: 3, borderRadius: 2, background: "linear-gradient(90deg, transparent, #0284c7, transparent)", marginBottom: 12, opacity: 0.8 }} />
+      <div style={{ fontFamily: "var(--font-display)", fontSize: 18, fontWeight: 800, letterSpacing: "-0.01em", color: "#fff", textAlign: "center", lineHeight: 1.2, textShadow: "0 2px 16px rgba(0,0,0,0.6)" }}>Abdul Manan</div>
+      <div style={{ fontFamily: "var(--font-display)", fontSize: 9.5, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "#38bdf8", marginTop: 5, textShadow: "0 0 12px rgba(2,132,199,0.6)" }}>Flutter Developer</div>
     </div>
   );
 }
@@ -78,41 +73,44 @@ function PhoneShowcase({ screenIdx, onTap }: { screenIdx: number; onTap: () => v
 
   return (
     <div className="phone-outer" aria-label={`App showcase: ${curr.label}`}>
-      <div className="phone-glow" style={{ background: curr.accent, transition: "background 0.7s ease" }} />
+      <div className="phone-glow" style={{ background: curr.accent }} />
       <div
         className="phone-frame"
         role="button" tabIndex={0} aria-label="Tap to change app"
-        style={{ cursor: "pointer", transform: pressed ? "scale(0.965)" : "scale(1)", transition: "transform 0.18s cubic-bezier(0.34,1.56,0.64,1)" }}
-        onClick={() => { setPressed(true); setTimeout(() => setPressed(false), 220); onTap(); }}
+        style={{ transform: pressed ? "scale(0.965)" : "scale(1)" }}
+        onClick={() => { setPressed(true); setTimeout(() => setPressed(false), 200); onTap(); }}
         onKeyDown={e => e.key === "Enter" && onTap()}
       >
         <div className="btn-power" /><div className="btn-vol-up" /><div className="btn-vol-dn" />
         <div className="phone-screen-wrap">
           <div className="dynamic-island">
-            <div className="island-dot" style={{ background: curr.accent, transition: "background 0.4s" }} />
+            <div className="island-dot" style={{ background: curr.accent }} />
           </div>
           <div className="screen-viewport">
             {animating && (
-              <div key={`prev-${prevIdx}`} className={`screen-img screen-exit-${direction}`} style={{ position: "absolute", inset: 0 }}>
-                <img src={prev.image} alt={prev.label} style={{ width: "100%", height: "100%", objectFit: prev.fit as "cover" | "contain", objectPosition: prev.pos, display: "block" }} />
+              <div key={`prev-${prevIdx}`} className={`screen-img screen-exit-${direction}`}>
+                <img src={prev.image} alt={prev.label} style={{ objectFit: prev.fit as any, objectPosition: prev.pos }} />
                 {prev.isSplash && <SplashOverlay />}
               </div>
             )}
-            <div key={`curr-${screenIdx}`} className={animating ? `screen-img screen-enter-${direction}` : "screen-img screen-idle"} style={{ position: "absolute", inset: 0 }}>
-              <img src={curr.image} alt={curr.label} style={{ width: "100%", height: "100%", objectFit: curr.fit as "cover" | "contain", objectPosition: curr.pos, display: "block" }} />
+            <div key={`curr-${screenIdx}`} className={animating ? `screen-img screen-enter-${direction}` : "screen-img screen-idle"}>
+              <img src={curr.image} alt={curr.label} style={{ objectFit: curr.fit as any, objectPosition: curr.pos }} />
               {curr.isSplash && <SplashOverlay />}
             </div>
           </div>
           <div className="home-bar" />
         </div>
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 8, minHeight: 22 }}>
-        <div style={{ width: 7, height: 7, borderRadius: "50%", background: curr.accent, boxShadow: `0 0 8px ${curr.accent}`, flexShrink: 0, transition: "background 0.4s, box-shadow 0.4s" }} />
-        <span style={{ fontFamily: "var(--hero-font-display, var(--font-display))", fontSize: 11, fontWeight: 700, letterSpacing: "0.09em", textTransform: "uppercase",color: "var(--text-secondary, rgba(255,255,255,0.7))", whiteSpace: "nowrap" }}>{curr.label}</span>
+
+      {/* Phone App Label */}
+      <div className="phone-label-box">
+        <div className="phone-label-dot" style={{ background: curr.accent, boxShadow: `0 0 10px ${curr.accent}` }} />
+        <span>{curr.label}</span>
       </div>
-      <div style={{ display: "flex", alignItems: "center", gap: 6, padding: "5px 13px", borderRadius: 100, background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.12)", backdropFilter: "blur(8px)", WebkitBackdropFilter: "blur(8px)", cursor: "pointer", userSelect: "none" }} onClick={onTap}>
-        <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="var(--accent-cyan,#63e4ff)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
-        <span style={{ fontFamily: "var(--hero-font-display, var(--font-display))", fontSize: 10, fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", color: "var(--text-muted, rgba(255,255,255,0.5))" }}>tap to change</span>
+
+      <div className="phone-tap-hint" onClick={onTap}>
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
+        <span>Tap to change</span>
       </div>
     </div>
   );
@@ -122,126 +120,151 @@ function PhoneShowcase({ screenIdx, onTap }: { screenIdx: number; onTap: () => v
 function HeroStyles() {
   return (
     <style>{`
+      /* ─── Theme Variables ─── */
       :root {
-        --hero-font-display : "Syne", "Space Grotesk", system-ui, sans-serif;
-        --hero-font-body    : "DM Sans", system-ui, sans-serif;
-        --hero-radius-pill  : 100px;
-        --hero-radius-card  : 18px;
-        --hero-glow-cyan    : 0 0 40px rgba(99,228,255,0.18);
-        --hero-glow-violet  : 0 0 40px rgba(167,139,250,0.18);
+        --hero-glass-bg: rgba(15, 23, 42, 0.04);
+        --hero-glass-border: rgba(15, 23, 42, 0.08);
+        --hero-glass-hover: rgba(15, 23, 42, 0.08);
+        --hero-text-primary: #0f172a;
+        --hero-text-secondary: #475569;
+        --hero-text-muted: #64748b;
+        
+        /* Specifically darker borders for journey in light mode */
+        --journey-border: rgba(15, 23, 42, 0.25); 
       }
-        :root {
-  --text-primary: #0f172a;   /* dark text for light mode */
-  --text-secondary: #334155;
-  --text-muted: #64748b;
-}
+      [data-theme="dark"] {
+        --hero-glass-bg: rgba(255, 255, 255, 0.03);
+        --hero-glass-border: rgba(255, 255, 255, 0.1);
+        --hero-glass-hover: rgba(255, 255, 255, 0.08);
+        --hero-text-primary: #ffffff;
+        --hero-text-secondary: rgba(255, 255, 255, 0.75);
+        --hero-text-muted: rgba(255, 255, 255, 0.5);
+        
+        /* Subtle/bright borders for journey in dark mode */
+        --journey-border: rgba(255, 255, 255, 0.15); 
+      }
 
-[data-theme="dark"] {
-  --text-primary: #ffffff;
-  --text-secondary: rgba(255,255,255,0.7);
-  --text-muted: rgba(255,255,255,0.5);
-}
-      .phone-outer { position: relative; width: 260px; display: flex; flex-direction: column; align-items: center; gap: 18px; filter: drop-shadow(0 48px 80px rgba(0,0,0,0.5)); }
-      .phone-glow  { position: absolute; width: 220px; height: 340px; top: 40px; left: 50%; transform: translateX(-50%); border-radius: 50%; filter: blur(60px); opacity: 0.38; pointer-events: none; z-index: 0; }
-      .phone-frame { position: relative; width: 260px; height: 530px; border-radius: 50px; background: linear-gradient(145deg,#2a2d3e,#0e1018,#1a1d2e); box-shadow: 0 0 0 1.5px rgba(255,255,255,0.10), inset 0 1px 0 rgba(255,255,255,0.12), inset 0 -1px 0 rgba(0,0,0,0.4), 0 30px 80px rgba(0,0,0,0.7), 0 8px 24px rgba(0,0,0,0.4); z-index: 1; flex-shrink: 0; }
-      .btn-power  { position: absolute; right: -3px; top: 100px; width: 3.5px; height: 58px; border-radius: 0 3px 3px 0; background: linear-gradient(180deg,#3a3d50,#22253a); box-shadow: 1px 0 4px rgba(0,0,0,0.3); }
-      .btn-vol-up { position: absolute; left: -3px; top: 80px;  width: 3.5px; height: 34px; border-radius: 3px 0 0 3px; background: linear-gradient(180deg,#3a3d50,#22253a); box-shadow: -1px 0 4px rgba(0,0,0,0.3); }
-      .btn-vol-dn { position: absolute; left: -3px; top: 124px; width: 3.5px; height: 34px; border-radius: 3px 0 0 3px; background: linear-gradient(180deg,#3a3d50,#22253a); box-shadow: -1px 0 4px rgba(0,0,0,0.3); }
-      .phone-screen-wrap { position: absolute; top: 12px; left: 12px; right: 12px; bottom: 12px; border-radius: 40px; overflow: hidden; background: #000; box-shadow: inset 0 1px 0 rgba(255,255,255,0.08); }
-      .dynamic-island { position: absolute; top: 10px; left: 50%; transform: translateX(-50%); z-index: 30; display: flex; align-items: center; gap: 7px; padding: 5px 14px; border-radius: 100px; background: rgba(0,0,0,0.65); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); box-shadow: 0 2px 8px rgba(0,0,0,0.4); }
-      .island-dot { width: 7px; height: 7px; border-radius: 50%; box-shadow: 0 0 6px currentColor; }
-      .screen-viewport { position: absolute; inset: 0; overflow: hidden; background: #000; }
+      /* ─── Phone Mockup ─── */
+      .phone-outer { position: relative; width: 270px; display: flex; flex-direction: column; align-items: center; gap: 16px; z-index: 10; }
+      .phone-glow  { position: absolute; width: 200px; height: 320px; top: 60px; left: 50%; transform: translateX(-50%); border-radius: 50%; filter: blur(70px); opacity: 0.4; pointer-events: none; transition: background 0.7s ease; }
+      .phone-frame { position: relative; width: 270px; height: 550px; border-radius: 46px; background: linear-gradient(145deg, #1e2029, #0a0b10); box-shadow: 0 0 0 1.5px rgba(255,255,255,0.1), inset 0 2px 4px rgba(255,255,255,0.2), 0 30px 60px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+      .btn-power  { position: absolute; right: -3px; top: 110px; width: 3px; height: 60px; border-radius: 0 3px 3px 0; background: #333; }
+      .btn-vol-up { position: absolute; left: -3px; top: 90px;  width: 3px; height: 35px; border-radius: 3px 0 0 3px; background: #333; }
+      .btn-vol-dn { position: absolute; left: -3px; top: 135px; width: 3px; height: 35px; border-radius: 3px 0 0 3px; background: #333; }
+      
+      .phone-screen-wrap { position: absolute; top: 10px; left: 10px; right: 10px; bottom: 10px; border-radius: 36px; overflow: hidden; background: #000; box-shadow: inset 0 0 10px rgba(0,0,0,0.5); }
+      .dynamic-island { position: absolute; top: 12px; left: 50%; transform: translateX(-50%); z-index: 30; display: flex; align-items: center; gap: 6px; padding: 6px 16px; border-radius: 20px; background: #000; box-shadow: 0 2px 10px rgba(0,0,0,0.5); }
+      .island-dot { width: 6px; height: 6px; border-radius: 50%; transition: background 0.4s; }
+      .home-bar { position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%); width: 40%; height: 4px; border-radius: 4px; background: rgba(255,255,255,0.4); z-index: 25; }
+      
+      .screen-viewport { position: absolute; inset: 0; background: #0a0a0a; }
       .screen-img { position: absolute; inset: 0; width: 100%; height: 100%; }
+      .screen-img img { width: 100%; height: 100%; display: block; }
+      
+      /* Sliding Animations */
       .screen-idle        { animation: none; }
-      .screen-enter-left  { animation: slideInLeft   0.75s cubic-bezier(0.25,0.46,0.45,0.94) forwards; }
-      .screen-exit-left   { animation: slideOutLeft  0.75s cubic-bezier(0.25,0.46,0.45,0.94) forwards; }
-      .screen-enter-right { animation: slideInRight  0.75s cubic-bezier(0.25,0.46,0.45,0.94) forwards; }
-      .screen-exit-right  { animation: slideOutRight 0.75s cubic-bezier(0.25,0.46,0.45,0.94) forwards; }
-      @keyframes slideInLeft   { from { transform: translateX(100%);  opacity: 0.6; } to { transform: translateX(0);     opacity: 1; } }
-      @keyframes slideOutLeft  { from { transform: translateX(0);     opacity: 1;   } to { transform: translateX(-100%); opacity: 0.6; } }
-      @keyframes slideInRight  { from { transform: translateX(-100%); opacity: 0.6; } to { transform: translateX(0);     opacity: 1; } }
-      @keyframes slideOutRight { from { transform: translateX(0);     opacity: 1;   } to { transform: translateX(100%);  opacity: 0.6; } }
-      .home-bar { position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); width: 52px; height: 4px; border-radius: 3px; background: rgba(255,255,255,0.28); z-index: 25; }
-      .hero-name { display: inline-block; font-family: var(--hero-font-display,var(--font-display)); font-size: clamp(1.9rem,3.8vw,3rem); font-weight: 800; letter-spacing: -0.035em; line-height: 1.1; color: var(--text-primary); opacity: 0; transform: translateY(28px); animation: fadeUpHero 0.85s cubic-bezier(0.22,1,0.36,1) 0.12s forwards; cursor: default; }
-      .hero-name-gradient { background: linear-gradient(135deg,#63e4ff 0%,#a78bfa 55%,#f472b6 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-      @keyframes fadeUpHero { to { opacity: 1; transform: translateY(0); } }
-      .role-badge { display: inline-flex; align-items: center; gap: 10px; padding: 6px 16px 6px 8px; border-radius: var(--hero-radius-pill); background: var(--bg-glass,rgba(255,255,255,0.06)); border: 1px solid var(--border-subtle,rgba(255,255,255,0.1)); margin-bottom: 16px; }
-      .role-dot   { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg,#0284c7,#7c3aed); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
-      .role-text  { font-family: var(--hero-font-display,var(--font-display)); font-size: 11px; font-weight: 700; letter-spacing: 0.13em; text-transform: uppercase; color: var(--text-primary); }
-      .journey-row  { display: flex; align-items: center; gap: 0; margin-bottom: 22px; overflow: visible; justify-content: center; }
-      .journey-node { display: flex; flex-direction: column; align-items: center; gap: 5px; flex-shrink: 0; }
-      .journey-ring { width: 46px; height: 46px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 20px; background: var(--bg-glass,rgba(255,255,255,0.06)); border: 1.5px solid var(--border-subtle,rgba(255,255,255,0.1)); cursor: default; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), border-color 0.25s, box-shadow 0.25s; }
-      .journey-ring:hover { transform: scale(1.2) translateY(-4px); }
-      .journey-label { font-family: var(--hero-font-display,var(--font-display)); font-size: 9.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted,rgba(255,255,255,0.5)); white-space: nowrap; }
-      .journey-line  { flex: 1; max-width: 36px; height: 1px; background: linear-gradient(90deg,var(--border-glow,rgba(99,228,255,0.3)),transparent); margin-bottom: 18px; flex-shrink: 0; }
-      .hero-bio { font-family: var(--hero-font-body,var(--font-body)); font-size: 14.5px; line-height: 1.85; color: var(--text-secondary,rgba(255,255,255,0.6)); max-width: 440px; margin-bottom: 22px; }
-      .hero-bio strong { color: var(--text-primary); font-weight: 600; }
-      .stats-row { display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 22px; }
-      .stat-card  { display: flex; flex-direction: column; gap: 3px; padding: 13px 18px; border-radius: var(--hero-radius-card); background: var(--bg-glass,rgba(255,255,255,0.06)); border: 1px solid var(--border-subtle,rgba(255,255,255,0.09)); flex: 1; min-width: 78px; cursor: default; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), border-color 0.25s, box-shadow 0.25s; }
-      .stat-card:hover { transform: translateY(-5px) scale(1.04); border-color: var(--border-glow,rgba(99,228,255,0.3)); box-shadow: var(--hero-glow-cyan); }
-      .stat-value { font-family: var(--hero-font-display,var(--font-display)); font-weight: 800; font-size: 1.5rem; line-height: 1; background: linear-gradient(135deg,#0284c7,#7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-      .stat-label { font-family: var(--hero-font-body,var(--font-body)); font-size: 10px; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; color: var(--text-muted,rgba(255,255,255,0.45)); }
-      .hero-divider { height: 1px; max-width: 320px; margin-bottom: 22px; background: linear-gradient(90deg,var(--border-glow,rgba(99,228,255,0.3)),transparent); }
-      .btn-primary { display: inline-flex; align-items: center; gap: 8px; padding: 13px 26px; font-family: var(--hero-font-display,var(--font-display)); font-size: 13.5px; font-weight: 700; color: #fff; background: linear-gradient(135deg,#0284c7,#7c3aed); border: none; border-radius: var(--hero-radius-pill); cursor: pointer; text-decoration: none; position: relative; overflow: hidden; transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s; white-space: nowrap; }
-      .btn-primary::after { content: ''; position: absolute; inset: 0; background: rgba(255,255,255,0.12); opacity: 0; transition: opacity 0.25s; }
-      .btn-primary:hover::after { opacity: 1; }
-      .btn-primary:hover  { transform: translateY(-2px) scale(1.03); box-shadow: 0 12px 32px rgba(2,132,199,0.35); }
-      .btn-primary:active { transform: scale(0.97); }
-      .btn-outline { display: inline-flex; align-items: center; gap: 8px; padding: 13px 26px; font-family: var(--hero-font-display,var(--font-display)); font-size: 13.5px; font-weight: 600; color: var(--accent-cyan,#63e4ff); background: transparent; border: 1.5px solid var(--border-glow,rgba(99,228,255,0.3)); border-radius: var(--hero-radius-pill); cursor: pointer; text-decoration: none; transition: all 0.3s; white-space: nowrap; }
-      .btn-outline:hover { background: var(--bg-glass-hover,rgba(255,255,255,0.09)); border-color: var(--accent-cyan,#63e4ff); box-shadow: var(--hero-glow-cyan); transform: translateY(-2px); }
-      .social-icon { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--bg-glass,rgba(255,255,255,0.06)); border: 1px solid var(--border-subtle,rgba(255,255,255,0.09)); color: var(--text-secondary,rgba(255,255,255,0.55)); text-decoration: none; flex-shrink: 0; transition: all 0.28s cubic-bezier(0.34,1.56,0.64,1); }
-      .social-icon:hover { border-color: var(--border-glow,rgba(99,228,255,0.3)); color: var(--accent-cyan,#63e4ff); background: var(--bg-glass-hover,rgba(255,255,255,0.09)); transform: translateY(-4px) scale(1.12); box-shadow: 0 10px 24px rgba(99,228,255,0.16); }
-      .h-reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
-      .h-reveal.ready { opacity: 1; transform: translateY(0); }
-      @keyframes particlePulse { 0%,100% { opacity: 0.18; transform: scale(1); } 50% { opacity: 0.42; transform: scale(1.8); } }
-      .scroll-mouse { width: 22px; height: 36px; border-radius: 12px; border: 1.5px solid var(--border-glow,rgba(99,228,255,0.3)); display: flex; justify-content: center; padding-top: 7px; }
-      .scroll-dot   { width: 2.5px; height: 8px; border-radius: 2px; background: var(--accent-cyan,#63e4ff); animation: scrollBounce 1.7s ease-in-out infinite; }
-      @keyframes scrollBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(9px); } }
-      @keyframes floatPhone { 0%,100% { transform: translateY(0px) rotateZ(0deg); } 50% { transform: translateY(-10px) rotateZ(0.6deg); } }
-      .phone-float { animation: floatPhone 6s ease-in-out infinite; }
+      .screen-enter-left  { animation: slideInLeft   0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+      .screen-exit-left   { animation: slideOutLeft  0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+      .screen-enter-right { animation: slideInRight  0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+      .screen-exit-right  { animation: slideOutRight 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
+      
+      @keyframes slideInLeft   { from { transform: translateX(100%); } to { transform: translateX(0); } }
+      @keyframes slideOutLeft  { from { transform: translateX(0); filter: brightness(0.5); } to { transform: translateX(-40%); filter: brightness(0.2); } }
+      @keyframes slideInRight  { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+      @keyframes slideOutRight { from { transform: translateX(0); filter: brightness(0.5); } to { transform: translateX(40%); filter: brightness(0.2); } }
 
+      .phone-label-box { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--hero-text-primary); }
+      .phone-label-dot { width: 8px; height: 8px; border-radius: 50%; transition: all 0.4s; }
+      .phone-tap-hint { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; background: var(--hero-glass-bg); border: 1px solid var(--hero-glass-border); font-family: var(--font-display); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--hero-text-muted); cursor: pointer; backdrop-filter: blur(10px); transition: background 0.3s; }
+      .phone-tap-hint:hover { background: var(--hero-glass-hover); color: var(--hero-text-primary); }
+
+      /* ─── Hero Content Left ─── */
+      .hero-content { display: flex; flex-direction: column; gap: 24px; z-index: 10; position: relative; }
+      
+      .role-badge { display: inline-flex; align-items: center; gap: 10px; padding: 6px 16px 6px 6px; border-radius: 100px; background: var(--hero-glass-bg); border: 1px solid var(--hero-glass-border); backdrop-filter: blur(10px); }
+      .role-dot   { width: 28px; height: 28px; border-radius: 50%; background: linear-gradient(135deg, #0284c7, #7c3aed); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(2, 132, 199, 0.3); }
+      .role-text  { font-family: var(--font-display); font-size: 11.5px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--hero-text-primary); }
+      
+      .hero-title { font-family: var(--font-display); font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 800; line-height: 1.05; letter-spacing: -0.02em; color: var(--hero-text-primary); margin: 0; }
+      .hero-subtitle { font-family: var(--font-display); font-size: clamp(1.2rem, 2.5vw, 1.8rem); font-weight: 700; line-height: 1.2; color: var(--hero-text-primary); margin: 8px 0 0 0; }
+      .text-gradient { background: linear-gradient(135deg, #0284c7 0%, #7c3aed 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+      
+      .hero-bio { font-family: var(--font-body); font-size: clamp(15px, 1.5vw, 17px); line-height: 1.7; color: var(--hero-text-secondary); max-width: 520px; margin: 0; }
+      .hero-bio strong { color: var(--hero-text-primary); font-weight: 600; }
+      
+      /* Journey Timeline */
+      .journey-track { display: flex; align-items: center; justify-content: flex-start; gap: 8px; width: 100%; max-width: 480px; }
+      .journey-node { display: flex; flex-direction: column; align-items: center; gap: 6px; flex-shrink: 0; }
+      
+      /* Darker borders for journey rings */
+      .journey-ring { width: 44px; height: 44px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 18px; background: var(--hero-glass-bg); border: 1.5px solid var(--journey-border); transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+      .journey-ring:hover { transform: scale(1.15) translateY(-4px); }
+      .journey-label { font-family: var(--font-display); font-size: 10px; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; }
+      
+      /* Darker journey connecting lines */
+      .journey-line  { flex-grow: 1; height: 2px; background: var(--journey-border); border-radius: 2px; position: relative; top: -10px; }
+      
+      /* Stats Grid */
+      .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; max-width: 500px; }
+      .stat-card  { display: flex; flex-direction: column; justify-content: center; padding: 16px; border-radius: 20px; background: var(--hero-glass-bg); border: 1px solid var(--hero-glass-border); backdrop-filter: blur(10px); transition: all 0.3s ease; }
+      .stat-card:hover { transform: translateY(-4px); border-color: rgba(2, 132, 199, 0.4); box-shadow: 0 10px 30px rgba(2, 132, 199, 0.1); }
+      .stat-value { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.4rem, 2vw, 1.8rem); line-height: 1; margin-bottom: 4px; background: linear-gradient(135deg, #0284c7, #7c3aed); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+      .stat-label { font-family: var(--font-body); font-size: 11px; font-weight: 600; letter-spacing: 0.05em; text-transform: uppercase; color: var(--hero-text-muted); }
+      
+      /* Buttons & Socials */
+      .hero-actions { display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+      .btn-primary { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 28px; font-family: var(--font-display); font-size: 14px; font-weight: 700; color: #fff; background: linear-gradient(135deg, #0284c7, #7c3aed); border: none; border-radius: 14px; cursor: pointer; text-decoration: none; box-shadow: 0 4px 15px rgba(124, 58, 237, 0.3); transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+      .btn-primary:hover  { transform: translateY(-3px) scale(1.02); box-shadow: 0 12px 25px rgba(2, 132, 199, 0.4); }
+      
+      .btn-outline { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 14px 28px; font-family: var(--font-display); font-size: 14px; font-weight: 600; color: var(--hero-text-primary); background: var(--hero-glass-bg); border: 1px solid var(--hero-glass-border); border-radius: 14px; cursor: pointer; text-decoration: none; transition: all 0.3s; }
+      .btn-outline:hover { background: var(--hero-glass-hover); border-color: var(--hero-text-primary); transform: translateY(-3px); }
+      
+      .hero-socials { display: flex; gap: 12px; flex-wrap: wrap; }
+      .social-icon { width: 44px; height: 44px; border-radius: 12px; display: flex; align-items: center; justify-content: center; background: var(--hero-glass-bg); border: 1px solid var(--hero-glass-border); color: var(--hero-text-secondary); text-decoration: none; transition: all 0.3s cubic-bezier(0.34,1.56,0.64,1); }
+      .social-icon:hover { color: #0284c7; border-color: #0284c7; background: var(--hero-glass-hover); transform: translateY(-4px) scale(1.1); box-shadow: 0 8px 20px rgba(2, 132, 199, 0.2); }
+      
+      /* Utilities */
+      .h-reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
+      .h-reveal.ready { opacity: 1; transform: translateY(0); }
+      
+      /* Mobile vs Desktop Layout Adjustments */
       @media (min-width: 1024px) {
-        .phone-mobile-slot { display: none !important; }
-        .phone-desktop-col { display: flex !important; }
-        .hero-left-col { align-items: flex-start !important; text-align: left !important; }
-        .hero-bio      { text-align: left !important; }
-        .hero-divider  { margin-left: 0 !important; }
-        .stats-row     { justify-content: flex-start !important; }
-        .hero-btns     { justify-content: flex-start !important; }
-        .socials-row   { justify-content: flex-start !important; }
+        .mobile-phone-slot { display: none; }
+        .desktop-phone-slot { display: flex; justify-content: center; align-items: center; }
+        .hero-content { align-items: flex-start; text-align: left; }
       }
-      @media (min-width: 640px) and (max-width: 1023px) {
-        .phone-desktop-col { display: none !important; }
-        .phone-mobile-slot { display: flex !important; justify-content: center; padding: 32px 0 8px; margin-bottom: 20px; }
-        .hero-left-col { align-items: center; text-align: center; }
-        .hero-bio      { text-align: center; margin-left: auto; margin-right: auto; }
-        .hero-divider  { margin-left: auto; margin-right: auto; }
-        .stats-row, .hero-btns, .socials-row { justify-content: center; }
+      @media (max-width: 1023px) {
+        .desktop-phone-slot { display: none; }
+        .mobile-phone-slot { display: flex; justify-content: center; padding-top: 20px; padding-bottom: 20px; }
+        .hero-content { align-items: center; text-align: center; gap: 20px; }
+        .hero-bio { text-align: center; }
+        .journey-track { justify-content: center; }
+        .hero-actions { width: 100%; flex-direction: column; gap: 12px; }
+        .btn-primary, .btn-outline { width: 100%; }
+        
+        /* Centering socials explicitly for mobile */
+        .hero-socials { justify-content: center; width: 100%; }
+        
+        /* Scale down phone slightly for mobile to save vertical space */
+        .phone-outer { width: 220px; }
+        .phone-frame { width: 220px; height: 450px; border-radius: 40px; }
+        .phone-screen-wrap { border-radius: 30px; }
+        .btn-power { top: 90px; height: 50px; }
+        .btn-vol-up { top: 75px; height: 30px; }
+        .btn-vol-dn { top: 115px; height: 30px; }
+        .dynamic-island { padding: 5px 12px; }
+        .island-dot { width: 5px; height: 5px; }
+        
+        /* Stats grid adjust */
+        .stats-grid { gap: 8px; width: 100%; }
+        .stat-card { padding: 12px 10px; align-items: center; }
       }
-      @media (max-width: 639px) {
-        .phone-desktop-col { display: none !important; }
-        .phone-mobile-slot { display: flex !important; justify-content: center; padding: 24px 0 8px; margin-bottom: 16px; }
-        .phone-outer       { width: 210px; }
-        .phone-frame       { width: 210px; height: 430px; border-radius: 42px; }
-        .phone-screen-wrap { border-radius: 32px; }
-        .btn-power         { top: 82px;  height: 46px; }
-        .btn-vol-up        { top: 66px;  height: 28px; }
-        .btn-vol-dn        { top: 100px; height: 28px; }
-        .dynamic-island    { padding: 4px 11px; }
-        .island-dot        { width: 6px; height: 6px; }
-        .hero-left-col     { align-items: center; text-align: center; }
-        .hero-bio          { text-align: center; margin-left: auto; margin-right: auto; font-size: 13.5px; }
-        .hero-divider      { margin-left: auto; margin-right: auto; }
-        .stats-row         { justify-content: center; gap: 8px; }
-        .stat-card         { padding: 10px 13px; min-width: 70px; align-items: center; }
-        .stat-value        { font-size: 1.25rem; }
-        .hero-btns         { flex-direction: column !important; gap: 10px; width: 100%; }
-        .btn-primary, .btn-outline { justify-content: center; width: 100%; padding: 14px 20px; }
-        .socials-row       { justify-content: center; }
-        .journey-ring      { width: 40px; height: 40px; font-size: 17px; }
-        .journey-line      { max-width: 22px; }
-        .hero-name         { font-size: clamp(1.9rem, 8vw, 2.6rem); }
-      }
+
+      /* Animations */
+      @keyframes floatPhone { 0%,100% { transform: translateY(0px) rotateZ(0deg); } 50% { transform: translateY(-12px) rotateZ(0.8deg); } }
+      .phone-float { animation: floatPhone 6s ease-in-out infinite; perspective: 1000px; }
+      @keyframes scrollBounce { 0%,100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
+      .scroll-dot { width: 2px; height: 6px; border-radius: 2px; background: var(--hero-text-primary); animation: scrollBounce 2s infinite ease-in-out; }
     `}</style>
   );
 }
@@ -254,46 +277,28 @@ export default function Hero() {
   const [mouse,     setMouse]     = useState({ x: 0, y: 0 });
   const [paused,    setPaused]    = useState(false);
 
-  const particles = useMemo(() =>
-    Array.from({ length: 22 }, (_, i) => ({
-      id: i,
-      left:  Math.random() * 100,
-      top:   Math.random() * 100,
-      delay: Math.random() * 5,
-      dur:   3 + Math.random() * 4,
-      size:  1 + Math.random() * 1.5,
-    })), []);
-
-  // ── Effect 1: mount ──────────────────────────────────────────────────
   useEffect(() => {
     setMounted(true);
-    setTimeout(() => setHeroReady(true), 80);
+    setTimeout(() => setHeroReady(true), 100);
   }, []);
 
-  // ── Effect 2: auto-advance ───────────────────────────────────────────
-  // deps are ALWAYS exactly 3 items. Using setTimeout lets delay vary per
-  // slide without changing the deps array size between renders.
   useEffect(() => {
     if (!mounted || paused) return;
-    const delay = screen === 0 ? 10000 : 5000;
+    const delay = screen === 0 ? 8000 : 4000;
     const t = setTimeout(() => setScreen(s => (s + 1) % SCREENS.length), delay);
     return () => clearTimeout(t);
   }, [mounted, paused, screen]);
 
-  // ── Effect 3: mouse parallax ─────────────────────────────────────────
   useEffect(() => {
-    if (!mounted) return;
+    if (!mounted || window.innerWidth < 1024) return;
     const fn = (e: MouseEvent) => setMouse({
-      x: (e.clientX / window.innerWidth  - 0.5) * 14,
-      y: (e.clientY / window.innerHeight - 0.5) * 14,
+      x: (e.clientX / window.innerWidth  - 0.5) * 15,
+      y: (e.clientY / window.innerHeight - 0.5) * 15,
     });
     window.addEventListener("mousemove", fn);
     return () => window.removeEventListener("mousemove", fn);
   }, [mounted]);
 
-  // ── IMPORTANT: ALL hooks above this line.
-  // Early return AFTER hooks — React sees the same number of hook calls
-  // on every render regardless of which branch we take below.
   const handleTap = () => {
     setScreen(s => (s + 1) % SCREENS.length);
     setPaused(true);
@@ -316,86 +321,59 @@ export default function Hero() {
       <section
         id="home"
         className="relative min-h-screen flex items-center overflow-hidden grid-bg"
-        style={{ background: "var(--bg-primary)", paddingTop: 60, paddingBottom: 60 }}
+        style={{ background: "var(--bg-primary)", paddingTop: 80, paddingBottom: 60 }}
       >
-        {/* Orbs */}
-        <div className="absolute pointer-events-none" style={{ width: 640, height: 640, top: "-22%", left: "-15%", borderRadius: "50%", background: "radial-gradient(circle,rgba(99,228,255,0.055),transparent)", filter: "blur(80px)", animation: "floatSlow 13s ease-in-out infinite" }} />
-        <div className="absolute pointer-events-none" style={{ width: 540, height: 540, bottom: "-20%", right: "-12%", borderRadius: "50%", background: "radial-gradient(circle,rgba(167,139,250,0.06),transparent)", filter: "blur(80px)", animation: "floatSlow 11s ease-in-out infinite 3.5s" }} />
-
-        {/* Particles */}
-        {particles.map(p => (
-          <div key={p.id} className="absolute pointer-events-none" style={{ left: `${p.left}%`, top: `${p.top}%`, width: p.size, height: p.size, borderRadius: "50%", background: "var(--accent-cyan,#63e4ff)", opacity: 0, animation: `particlePulse ${p.dur}s ease-in-out ${p.delay}s infinite` }} />
-        ))}
-
-        {/* SVG accents */}
-        <div className="absolute pointer-events-none" style={{ top: 100, right: 60, opacity: 0.07, animation: "rotate-slow 24s linear infinite" }}>
-          <svg width="110" height="110" viewBox="0 0 110 110" fill="none">
-            <polygon points="55,5 105,85 5,85" stroke="var(--accent-cyan,#63e4ff)" strokeWidth="1.5" fill="none" />
-            <polygon points="55,22 91,78 19,78" stroke="var(--accent-violet,#a78bfa)" strokeWidth="0.8" fill="none" />
-          </svg>
-        </div>
-        <div className="absolute pointer-events-none" style={{ bottom: 72, left: 52, opacity: 0.06, animation: "rotate-slow 30s linear infinite reverse" }}>
-          <svg width="72" height="72" viewBox="0 0 72 72" fill="none">
-            <rect x="8" y="8" width="56" height="56" rx="3" stroke="var(--accent-violet,#a78bfa)" strokeWidth="1.5" fill="none" transform="rotate(45 36 36)" />
-            <rect x="20" y="20" width="32" height="32" rx="2" stroke="var(--accent-cyan,#63e4ff)" strokeWidth="0.8" fill="none" transform="rotate(45 36 36)" />
-          </svg>
-        </div>
+        {/* Ambient Glows */}
+        <div className="absolute pointer-events-none" style={{ width: 600, height: 600, top: "-10%", left: "-10%", borderRadius: "50%", background: "radial-gradient(circle,rgba(2,132,199,0.06),transparent)", filter: "blur(80px)" }} />
+        <div className="absolute pointer-events-none" style={{ width: 500, height: 500, bottom: "-10%", right: "-5%", borderRadius: "50%", background: "radial-gradient(circle,rgba(124,58,237,0.06),transparent)", filter: "blur(80px)" }} />
 
         {/* MAIN CONTAINER */}
         <div className="relative z-10 max-w-7xl mx-auto px-5 lg:px-8 w-full">
 
-          {/* Phone — mobile & tablet slot */}
-          <div className="phone-mobile-slot" style={{ display: "none" }}>
+          {/* MOBILE PHONE SLOT (Shows on top on small screens) */}
+          <div className="mobile-phone-slot">
             <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.1s" }} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
               <PhoneShowcase screenIdx={screen} onTap={handleTap} />
             </div>
           </div>
 
-          {/* Grid */}
-          <div className="grid lg:grid-cols-2 gap-8 lg:gap-20 items-center">
+          <div className="grid lg:grid-cols-2 gap-10 lg:gap-16 items-center">
 
             {/* ══ LEFT COLUMN ══ */}
-            <div className="hero-left-col" style={{ display: "flex", flexDirection: "column", alignItems: "flex-start" }}>
+            <div className="hero-content">
 
-              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.08s" }}>
+              {/* Badge */}
+              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.1s" }}>
                 <div className="role-badge">
                   <div className="role-dot">
-                    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                       <polyline points="16 18 22 12 16 6" /><polyline points="8 6 2 12 8 18" />
                     </svg>
                   </div>
-                  <span className="role-text">Mobile &amp; Web Developer</span>
+                  <span className="role-text">Mobile & Web Developer</span>
                 </div>
               </div>
 
-              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.15s", marginBottom: 6, width: "100%" }}>
-                <h1 style={{ margin: 0, padding: 0 }}>
-                  <span className="hero-name">Abdul <span className="hero-name-gradient">Manan</span></span>
-                </h1>
+              {/* Titles */}
+              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.2s" }}>
+                <h1 className="hero-title">Abdul <span className="text-gradient">Manan</span></h1>
+                <h2 className="hero-subtitle">From <span className="text-gradient">Idea to Play Store</span></h2>
               </div>
 
-              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.22s", marginBottom: 14, width: "100%" }}>
-                <h2 style={{ fontFamily: "var(--hero-font-display,var(--font-display))", fontWeight: 800, fontSize: "clamp(1.05rem,2.2vw,1.5rem)", letterSpacing: "-0.02em", color: "var(--text-primary)", margin: 0 }}>
-                  From{" "}
-                  <span style={{ background: "linear-gradient(135deg,#0284c7,#7c3aed)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", backgroundClip: "text" }}>
-                    Idea to Play Store
-                  </span>
-                </h2>
-              </div>
-
-              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.28s", width: "100%", marginBottom: 14 }}>
-                <div className="journey-row">
+              {/* Journey Nodes */}
+              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.3s", width: "100%" }}>
+                <div className="journey-track">
                   {JOURNEY.map((step, i) => (
                     <div key={step.label} style={{ display: "contents" }}>
                       <div className="journey-node">
                         <div
                           className="journey-ring"
-                          onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = step.color; el.style.boxShadow = `0 0 16px ${step.color}55`; }}
+                          onMouseEnter={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = step.color; el.style.boxShadow = `0 4px 15px ${step.color}40`; }}
                           onMouseLeave={e => { const el = e.currentTarget as HTMLElement; el.style.borderColor = ""; el.style.boxShadow = ""; }}
                         >
                           {step.icon}
                         </div>
-                        <span className="journey-label" style={{ color: step.color + "cc" }}>{step.label}</span>
+                        <span className="journey-label" style={{ color: step.color }}>{step.label}</span>
                       </div>
                       {i < JOURNEY.length - 1 && <div className="journey-line" />}
                     </div>
@@ -403,17 +381,19 @@ export default function Hero() {
                 </div>
               </div>
 
-              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.34s", width: "100%" }}>
+              {/* Bio */}
+              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.4s" }}>
                 <p className="hero-bio">
                   I design and build <strong>Flutter</strong> apps with pixel-perfect UIs,
-                  powered by <strong>Firebase &amp; Supabase</strong> backends.
+                  powered by <strong>Firebase & Supabase</strong> backends.
                   Whether it's your first MVP or a full product — I take it from
-                  wireframe to the <strong>Play Store &amp; App Store</strong>, fast.
+                  wireframes directly to the <strong>App Store</strong>.
                 </p>
               </div>
 
-              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.40s", width: "100%" }}>
-                <div className="stats-row">
+              {/* Stats */}
+              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.5s", width: "100%" }}>
+                <div className="stats-grid">
                   {STATS.map(s => (
                     <div key={s.label} className="stat-card">
                       <div className="stat-value">{s.v}</div>
@@ -423,25 +403,25 @@ export default function Hero() {
                 </div>
               </div>
 
-              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.44s", width: "100%" }}>
-                <div className="hero-divider" />
-              </div>
-
-              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.50s", marginBottom: 20, width: "100%" }}>
-                <div className="hero-btns" style={{ display: "flex", flexWrap: "wrap", gap: 12 }}>
+              {/* Buttons */}
+              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.6s", width: "100%" }}>
+                <div className="hero-actions">
                   <a href="#projects" className="btn-primary">
                     View My Work
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7" /></svg>
+                    <ArrowRight size={18} />
                   </a>
-                  <a href="#about" className="btn-outline">About Me</a>
+                  <a href="#about" className="btn-outline">
+                    About Me
+                  </a>
                 </div>
               </div>
 
-              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.56s", paddingBottom: 28, width: "100%" }}>
-                <div className="socials-row" style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              {/* Socials */}
+              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.7s", width: "100%" }}>
+                <div className="hero-socials">
                   {SOCIALS.map(({ Icon, href, isEmail, label }) => (
                     <a key={label} href={href} target={!isEmail ? "_blank" : undefined} rel={!isEmail ? "noopener noreferrer" : undefined} aria-label={label} className="social-icon">
-                      <Icon size={16} />
+                      <Icon size={18} strokeWidth={2} />
                     </a>
                   ))}
                 </div>
@@ -449,10 +429,10 @@ export default function Hero() {
 
             </div>{/* /LEFT */}
 
-            {/* ══ RIGHT COLUMN — desktop phone ══ */}
-            <div className="phone-desktop-col" style={{ display: "flex", alignItems: "center", justifyContent: "center" }}>
-              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.28s" }} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-                <div className="phone-float" style={{ transform: `rotateY(${mouse.x * 0.35}deg) rotateX(${-mouse.y * 0.35}deg)`, transition: "transform 0.55s ease-out", perspective: "1200px" }}>
+            {/* ══ RIGHT COLUMN — DESKTOP PHONE ══ */}
+            <div className="desktop-phone-slot">
+              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.3s" }} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+                <div className="phone-float" style={{ transform: `rotateY(${mouse.x}deg) rotateX(${-mouse.y}deg)`, transition: "transform 0.3s ease-out" }}>
                   <PhoneShowcase screenIdx={screen} onTap={handleTap} />
                 </div>
               </div>
@@ -462,9 +442,10 @@ export default function Hero() {
         </div>{/* /container */}
 
         {/* Scroll indicator */}
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-2" style={{ opacity: heroReady ? 1 : 0, transition: "opacity 0.7s ease 1.5s", pointerEvents: "none" }}>
-          <span style={{ fontSize: 9, textTransform: "uppercase", letterSpacing: "0.22em", color: "var(--text-muted,rgba(255,255,255,0.4))", fontFamily: "var(--hero-font-body)" }}>scroll</span>
-          <div className="scroll-mouse"><div className="scroll-dot" /></div>
+        <div className="absolute bottom-6 left-1/2 -translate-x-1/2 hidden md:flex flex-col items-center gap-2" style={{ opacity: heroReady ? 1 : 0, transition: "opacity 1s ease 1s" }}>
+          <div style={{ width: 20, height: 32, borderRadius: 12, border: "2px solid var(--hero-glass-border)", display: "flex", justifyContent: "center", paddingTop: 6 }}>
+            <div className="scroll-dot" />
+          </div>
         </div>
 
       </section>

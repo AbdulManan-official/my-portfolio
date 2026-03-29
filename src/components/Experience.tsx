@@ -10,7 +10,7 @@ const EXP = [
     duration: "2025 – Present",
     period: "5 months & continuing",
     type: "Full-time",
-    accent: "#0284c7",
+    accent: "#0284c7", // Sky
     icon: "🏢",
     index: "01",
     desc: "Working as a Flutter developer on multiple production apps, shipping high-quality software across Islamic, VPN, and media categories.",
@@ -28,7 +28,7 @@ const EXP = [
     duration: "2025 – Present",
     period: "Ongoing",
     type: "Freelance",
-    accent: "#7c3aed",
+    accent: "#7c3aed", // Purple
     icon: "🚀",
     index: "02",
     desc: "Building custom Flutter apps for international clients alongside full-time work. End-to-end ownership from design to deployment.",
@@ -46,7 +46,7 @@ const EXP = [
     duration: "2024 – 2025",
     period: "Foundation phase",
     type: "Self-Learning",
-    accent: "#db2777",
+    accent: "#db2777", // Pink
     icon: "🌱",
     index: "03",
     desc: "Started the Flutter journey building real apps while mastering Dart, Firebase, and mobile UI patterns.",
@@ -65,123 +65,136 @@ const TYPE_COLORS: Record<string, { bg: string; text: string; border: string }> 
   "Self-Learning": { bg: "rgba(219,39,119,0.12)", text: "#db2777", border: "rgba(219,39,119,0.3)" },
 };
 
-function ExpCard({ exp, visible, delay }: {
-  exp: typeof EXP[0]; visible: boolean; delay: number;
-}) {
+function ExpCard({ exp, delay = 0 }: { exp: typeof EXP[0]; delay?: number; }) {
   const [hov, setHov] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const cardRef = useRef<HTMLDivElement>(null);
   const tc = TYPE_COLORS[exp.type] ?? TYPE_COLORS["Full-time"];
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setVisible(true);
+          observer.disconnect();
+        }
+      },
+      { threshold: 0.15, rootMargin: "0px 0px -50px 0px" }
+    );
+    if (cardRef.current) observer.observe(cardRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   return (
     <div
+      ref={cardRef}
       className={`exp-card ${visible ? "in" : ""} ${hov ? "hov" : ""}`}
       style={{
-        transitionDelay: `${delay}s`,
-        borderColor: hov ? `${exp.accent}45` : undefined,
-        boxShadow:   hov ? `0 24px 64px ${exp.accent}18` : undefined,
+        transitionDelay: visible ? `${delay}s` : "0s",
+        borderColor: hov ? `${exp.accent}50` : undefined,
+        boxShadow: hov ? `0 30px 60px -12px ${exp.accent}25, inset 0 1px 1px rgba(255,255,255,0.08)` : undefined,
+        transform: visible ? (hov ? "translateY(-6px) scale(1.02)" : "translateY(0) scale(1)") : "translateY(40px) scale(0.95)",
       }}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
     >
-      {/* Top accent bar */}
+      {/* Top accent glow */}
       <div style={{
         position:"absolute", top:0, left:0, right:0, height:2,
-        borderRadius:"20px 20px 0 0",
-        background:`linear-gradient(90deg,${exp.accent},transparent)`,
-        opacity: hov ? 1 : 0, transition:"opacity 0.3s",
+        background:`linear-gradient(90deg, transparent, ${exp.accent}, transparent)`,
+        opacity: hov ? 1 : 0, transition:"opacity 0.4s ease",
+        boxShadow: hov ? `0 0 20px ${exp.accent}` : "none"
       }}/>
 
       {/* Watermark */}
-      <div style={{
-        position:"absolute", top:-4, right:16,
-        fontFamily:"var(--font-display)", fontSize:"4.5rem",
+      <div className="exp-wm" style={{
+        position:"absolute", top:-10, right:10,
+        fontFamily:"var(--font-display)", fontSize:"clamp(4rem, 10vw, 6rem)",
         fontWeight:800, lineHeight:1,
-        color:"rgba(15,23,42,0.04)",
         pointerEvents:"none", userSelect:"none",
-        transition:"color 0.3s",
-      }}
-        className="exp-wm"
-      >{exp.index}</div>
+        transition:"color 0.4s, transform 0.4s",
+        transform: hov ? "translate(-5px, 5px) scale(1.05)" : "none",
+      }}>{exp.index}</div>
 
       {/* Badge + period */}
-      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:6, marginBottom:14 }}>
+      <div style={{ display:"flex", alignItems:"center", justifyContent:"space-between", flexWrap:"wrap", gap:6, marginBottom:18, position: "relative", zIndex: 10 }}>
         <span style={{
-          fontSize:10, fontWeight:700, letterSpacing:"0.12em",
+          fontSize:11, fontWeight:700, letterSpacing:"0.12em",
           textTransform:"uppercase", fontFamily:"var(--font-display)",
-          padding:"3px 10px", borderRadius:100,
+          padding:"4px 12px", borderRadius:100,
           background:tc.bg, border:`1px solid ${tc.border}`, color:tc.text,
         }}>{exp.type}</span>
-        <span style={{ display:"flex", alignItems:"center", gap:4, fontSize:11, fontFamily:"var(--font-body)", color:"var(--text-muted)" }}>
-          <Calendar size={10} strokeWidth={2}/>{exp.period}
+        <span style={{ display:"flex", alignItems:"center", gap:6, fontSize:12, fontFamily:"var(--font-body)", color:"var(--text-muted)", fontWeight: 500 }}>
+          <Calendar size={12} strokeWidth={2} style={{ color: exp.accent }}/>
+          {exp.period}
         </span>
       </div>
 
       {/* Icon + role */}
-      <div style={{ display:"flex", alignItems:"flex-start", gap:12, marginBottom:12 }}>
+      <div style={{ display:"flex", alignItems:"flex-start", gap:16, marginBottom:16, position: "relative", zIndex: 10 }}>
         <div style={{
-          width:44, height:44, borderRadius:12, flexShrink:0,
+          width:52, height:52, borderRadius:16, flexShrink:0,
           display:"flex", alignItems:"center", justifyContent:"center",
-          fontSize:20,
-          background:`linear-gradient(135deg,${exp.accent}20,${exp.accent}0d)`,
-          border:`1px solid ${exp.accent}30`,
+          fontSize:24,
+          background:`linear-gradient(135deg,${exp.accent}20,${exp.accent}05)`,
+          border:`1px solid ${exp.accent}40`,
+          boxShadow: hov ? `0 0 20px ${exp.accent}30` : "none",
+          transition: "transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.4s ease",
+          transform: hov ? "scale(1.1) rotate(-5deg)" : "none"
         }}>{exp.icon}</div>
-        <div>
+        <div style={{ paddingTop: 2 }}>
           <h3 style={{
-            fontFamily:"var(--font-display)", fontWeight:700, fontSize:15,
-            margin:"0 0 3px", lineHeight:1.3, letterSpacing:"-0.01em",
+            fontFamily:"var(--font-display)", fontWeight:700, fontSize:17,
+            margin:"0 0 4px", lineHeight:1.3, letterSpacing:"-0.01em",
             transition:"color 0.3s",
             color: hov ? exp.accent : "var(--exp-role-color)",
           }}>{exp.role}</h3>
-          <div style={{ fontFamily:"var(--font-body)", fontSize:12, fontWeight:600, color:"var(--text-muted)" }}>
+          <div style={{ fontFamily:"var(--font-body)", fontSize:13, fontWeight:600, color:"var(--text-secondary)" }}>
             {exp.company}
           </div>
         </div>
       </div>
 
       {/* Meta chips */}
-      <div style={{ display:"flex", flexWrap:"wrap", gap:6, marginBottom:14 }}>
+      <div style={{ display:"flex", flexWrap:"wrap", gap:8, marginBottom:18, position: "relative", zIndex: 10 }}>
         {[
           { Icon: MapPin,    text: exp.location },
           { Icon: Briefcase, text: exp.duration  },
         ].map(({ Icon, text }) => (
           <span key={text} style={{
-            display:"inline-flex", alignItems:"center", gap:4,
-            fontSize:11, fontFamily:"var(--font-body)", color:"var(--text-muted)",
+            display:"inline-flex", alignItems:"center", gap:6,
+            fontSize:12, fontFamily:"var(--font-body)", color:"var(--text-muted)", fontWeight: 500,
             background:"var(--exp-chip-bg)",
             border:"1px solid var(--exp-chip-border)",
-            padding:"3px 9px", borderRadius:100,
+            padding:"4px 12px", borderRadius:100,
+            transition: "background 0.3s ease",
           }}>
-            <Icon size={10} strokeWidth={2} style={{ color:exp.accent }}/>
+            <Icon size={12} strokeWidth={2.5} style={{ color:exp.accent }}/>
             {text}
           </span>
         ))}
       </div>
 
-      {/* Divider */}
-      <div style={{
-        height:1, marginBottom:14, borderRadius:1,
-        background: hov ? `${exp.accent}22` : "var(--exp-divider)",
-        transition:"background 0.3s",
-      }}/>
-
       {/* Desc */}
       <p style={{
-        fontFamily:"var(--font-body)", fontSize:12.5, lineHeight:1.75,
+        fontFamily:"var(--font-body)", fontSize:14, lineHeight:1.7,
         color: hov ? "var(--text-primary)" : "var(--text-secondary)",
-        marginBottom:14, paddingLeft:12,
-        borderLeft:`2px solid ${hov ? exp.accent+"55" : "var(--exp-border-left)"}`,
+        marginBottom:18, paddingLeft:14,
+        borderLeft:`2px solid ${hov ? exp.accent : "var(--exp-border-left)"}`,
         transition:"color 0.3s, border-color 0.3s",
+        position: "relative", zIndex: 10
       }}>{exp.desc}</p>
 
       {/* Highlights */}
-      <ul style={{ listStyle:"none", padding:0, margin:"0 0 16px", display:"flex", flexDirection:"column", gap:7 }}>
+      <ul style={{ listStyle:"none", padding:0, margin:"0 0 20px", display:"flex", flexDirection:"column", gap:10, position: "relative", zIndex: 10 }}>
         {exp.highlights.map((h,i) => (
           <li key={i} style={{
-            display:"flex", alignItems:"flex-start", gap:7,
-            fontSize:12, fontFamily:"var(--font-body)", lineHeight:1.5,
+            display:"flex", alignItems:"flex-start", gap:8,
+            fontSize:13, fontFamily:"var(--font-body)", lineHeight:1.5,
             color: hov ? "var(--text-secondary)" : "var(--text-muted)",
             transition:"color 0.25s",
           }}>
-            <CheckCircle2 size={13} strokeWidth={2} style={{ color:exp.accent, flexShrink:0, marginTop:1 }}/>
+            <CheckCircle2 size={16} strokeWidth={2.5} style={{ color:exp.accent, flexShrink:0, marginTop:1 }}/>
             {h}
           </li>
         ))}
@@ -190,353 +203,331 @@ function ExpCard({ exp, visible, delay }: {
       {/* Footer */}
       <div style={{
         display:"flex", alignItems:"center", justifyContent:"space-between",
-        paddingTop:12,
-        borderTop:`1px solid ${hov ? exp.accent+"22" : "var(--exp-divider)"}`,
+        paddingTop:16,
+        borderTop:`1px solid ${hov ? exp.accent+"30" : "var(--exp-divider)"}`,
         transition:"border-color 0.3s",
+        position: "relative", zIndex: 10
       }}>
         <span style={{
-          fontFamily:"var(--font-display)", fontSize:11, fontWeight:700,
-          letterSpacing:"0.1em", opacity:0.6, color:exp.accent,
-        }}>{exp.index}</span>
-        <ArrowUpRight size={15} style={{
-          color: hov ? exp.accent : "var(--exp-arrow)",
-          transition:"color 0.25s, transform 0.3s",
-          transform: hov ? "translate(3px,-3px)" : "none",
-        }}/>
+          fontFamily:"var(--font-display)", fontSize:12, fontWeight:700,
+          letterSpacing:"0.15em", opacity: hov ? 1 : 0.6, color:exp.accent,
+          transition: "opacity 0.3s"
+        }}>READ MORE</span>
+        <div style={{
+          width: 32, height: 32, borderRadius: "50%",
+          background: hov ? exp.accent : "var(--exp-chip-bg)",
+          display: "flex", alignItems: "center", justifyContent: "center",
+          transition: "all 0.3s ease",
+          transform: hov ? "rotate(45deg)" : "none"
+        }}>
+          <ArrowUpRight size={16} style={{
+            color: hov ? "#fff" : "var(--exp-arrow)",
+            transition:"color 0.25s",
+          }}/>
+        </div>
       </div>
     </div>
   );
 }
 
 export default function Experience() {
-  const [visible, setVisible] = useState(false);
   const [mounted, setMounted] = useState(false);
-  const ref = useRef<HTMLElement>(null);
+  const [scrollProgress, setScrollProgress] = useState(0);
+  const [scrollY, setScrollY] = useState(0);
+  const sectionRef = useRef<HTMLElement>(null);
 
   useEffect(() => { setMounted(true); }, []);
+
+  // Scroll Motion tracking
   useEffect(() => {
-    if (!mounted || !ref.current) return;
-    const obs = new IntersectionObserver(
-      ([e]) => { if (e.isIntersecting) setVisible(true); },
-      { threshold: 0.05 }
-    );
-    obs.observe(ref.current);
-    return () => obs.disconnect();
+    if (!mounted) return;
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+      if (!sectionRef.current) return;
+      
+      const { top, height } = sectionRef.current.getBoundingClientRect();
+      const windowHeight = window.innerHeight;
+      
+      const center = windowHeight / 2;
+      let p = (center - top) / height;
+      p = Math.max(0, Math.min(1, p));
+      
+      setScrollProgress(p);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    handleScroll();
+    return () => window.removeEventListener("scroll", handleScroll);
   }, [mounted]);
 
-  if (!mounted) return <section id="experience" style={{ background:"var(--bg-secondary)", paddingTop:96, paddingBottom:96 }}/>;
+  if (!mounted) return <section id="experience" style={{ background:"var(--bg-secondary)", minHeight: "100vh" }}/>;
 
   return (
     <>
       <style>{`
-
         /* ── CSS tokens per theme ─────────────────────── */
         :root {
-          --exp-role-color:   #1e293b;
-          --exp-chip-bg:      rgba(15,23,42,0.05);
-          --exp-chip-border:  rgba(15,23,42,0.1);
+          --exp-role-color:   #0f172a;
+          --exp-chip-bg:      rgba(15,23,42,0.03);
+          --exp-chip-border:  rgba(15,23,42,0.06);
           --exp-divider:      rgba(15,23,42,0.08);
           --exp-border-left:  rgba(15,23,42,0.1);
-          --exp-arrow:        rgba(15,23,42,0.25);
+          --exp-arrow:        rgba(15,23,42,0.4);
         }
         [data-theme="dark"] {
-          --exp-role-color:   #f1f5f9;
-          --exp-chip-bg:      rgba(255,255,255,0.04);
-          --exp-chip-border:  rgba(255,255,255,0.09);
+          --exp-role-color:   #f8fafc;
+          --exp-chip-bg:      rgba(255,255,255,0.03);
+          --exp-chip-border:  rgba(255,255,255,0.08);
           --exp-divider:      rgba(255,255,255,0.08);
-          --exp-border-left:  rgba(255,255,255,0.1);
-          --exp-arrow:        rgba(255,255,255,0.2);
+          --exp-border-left:  rgba(255,255,255,0.15);
+          --exp-arrow:        rgba(255,255,255,0.4);
         }
 
         /* ── Watermark per theme ── */
-        .exp-wm { color: rgba(15,23,42,0.04); }
-        [data-theme="dark"] .exp-wm { color: rgba(255,255,255,0.04); }
-
-        /* ── Reveal ── */
-        .exp-reveal {
-          opacity:0; transform:translateY(20px);
-          transition: opacity 0.55s ease, transform 0.55s ease;
-        }
-        .exp-reveal.in { opacity:1; transform:translateY(0); }
+        .exp-wm { color: rgba(15,23,42,0.03); }
+        [data-theme="dark"] .exp-wm { color: rgba(255,255,255,0.03); }
 
         /* ── Card base ── */
         .exp-card {
           background: var(--bg-card);
-          border: 1px solid var(--exp-chip-border);
-          border-radius: 20px;
-          padding: 22px;
+          border: 1px solid var(--border-subtle);
+          border-radius: 24px;
+          padding: 20px; /* Reduced padding for mobile by default */
           position: relative; overflow: hidden;
-          backdrop-filter: blur(16px);
-          -webkit-backdrop-filter: blur(16px);
+          backdrop-filter: blur(20px);
+          -webkit-backdrop-filter: blur(20px);
           cursor: default;
           width: 100%;
-          opacity: 0; transform: translateY(28px);
+          opacity: 0; 
           transition:
-            opacity 0.5s ease,
-            transform 0.5s cubic-bezier(0.34,1.56,0.64,1),
-            border-color 0.3s ease,
-            box-shadow 0.3s ease;
+            opacity 0.6s ease,
+            transform 0.6s cubic-bezier(0.34,1.56,0.64,1),
+            border-color 0.4s ease,
+            box-shadow 0.4s ease;
         }
-        .exp-card.in  { opacity:1; transform:translateY(0); }
-        .exp-card:hover { transform:translateY(-5px) scale(1.012) !important; }
-
-        /* ── Stats ── */
-        .exp-stat-num {
-          font-family:var(--font-display); font-size:1.3rem; font-weight:800;
-          background:linear-gradient(135deg,#0284c7,#7c3aed);
-          -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text;
-        }
-        .exp-stat-lbl {
-          font-family:var(--font-body); font-size:10px;
-          color:var(--text-muted); letter-spacing:0.08em; text-transform:uppercase;
+        .exp-card.in  { opacity: 1; }
+        @media (min-width: 640px) {
+          .exp-card { padding: 28px; } /* Larger padding for bigger screens */
         }
 
-        /* ══════════════════════════════════════════════
-           MOBILE default  (< 768px)
-           Simple stacked list with left rail
-        ══════════════════════════════════════════════ */
+        /* ── Timeline Common Styles ── */
+        .timeline-spine-bg {
+          position: absolute; top: 0; bottom: 0; width: 2px;
+          background: var(--border-subtle);
+          z-index: 0;
+          height: 100%;
+        }
+        .timeline-spine-active {
+          position: absolute; top: 0; width: 2px;
+          background: linear-gradient(to bottom, #0284c7, #7c3aed, #db2777);
+          z-index: 1;
+          transition: height 0.1s ease-out;
+          box-shadow: 0 0 10px rgba(124,58,237,0.5);
+        }
+
+        /* ── Strict Layout Breakpoints ── */
+        
+        /* 1. MOBILE (Base up to 767px) */
         .exp-layout-mobile {
-          display: flex;
-          flex-direction: column;
-          gap: 14px;
-          position: relative;
+          display: flex; flex-direction: column; gap: 24px; position: relative;
         }
-        /* Left rail line */
-        .exp-layout-mobile::before {
-          content:'';
-          position:absolute; left:15px; top:0; bottom:0; width:1px;
-          background:linear-gradient(
-            to bottom,
-            transparent 0%,
-            rgba(2,132,199,0.4) 15%,
-            rgba(124,58,237,0.5) 52%,
-            rgba(219,39,119,0.35) 88%,
-            transparent 100%
-          );
-          z-index:0;
-        }
-        .exp-mobile-row {
-          display:flex; flex-direction:row;
-          align-items:flex-start; gap:14px; position:relative; z-index:1;
-        }
+        .exp-layout-tablet { display: none; }
+        .exp-layout-desktop { display: none; }
+        
+        /* Center the line inside the left column */
+        .exp-layout-mobile .timeline-spine-bg,
+        .exp-layout-mobile .timeline-spine-active { left: 7px; } 
+        
+        .exp-mobile-row { display:flex; align-items:flex-start; gap:16px; position:relative; z-index:2; }
         .exp-mobile-dot {
-          width:14px; height:14px; border-radius:50%; flex-shrink:0;
-          margin-top:18px; border:2px solid rgba(255,255,255,0.2);
-          position:relative; z-index:2;
+          width:16px; height:16px; border-radius:50%; flex-shrink:0; margin-top:32px;
+          border: 3px solid var(--bg-secondary); position:relative; z-index:3;
+          transition: all 0.3s ease;
         }
-        .exp-mobile-card { flex:1; min-width:0; }
 
-        /* HIDE desktop layout on mobile */
-        .exp-layout-desktop { display:none; }
-
-        /* ══════════════════════════════════════════════
-           TABLET  768px–1023px
-           Single column centered, wider cards
-        ══════════════════════════════════════════════ */
+        /* 2. TABLET (768px–1023px) */
         @media (min-width:768px) and (max-width:1023px) {
           .exp-layout-mobile  { display:none; }
-          .exp-layout-desktop { display:none; }
           .exp-layout-tablet  {
-            display:flex; flex-direction:column;
-            align-items:center; gap:20px;
-            position:relative;
+            display:flex; flex-direction:column; align-items:center; gap:32px; position:relative;
           }
-          /* center spine */
-          .exp-layout-tablet::before {
-            content:'';
-            position:absolute; left:50%; transform:translateX(-50%);
-            top:0; bottom:0; width:1px;
-            background:linear-gradient(
-              to bottom,
-              transparent 0%,
-              rgba(2,132,199,0.4) 10%,
-              rgba(124,58,237,0.5) 50%,
-              rgba(219,39,119,0.35) 90%,
-              transparent 100%
-            );
-            z-index:0;
-          }
+          .exp-layout-desktop { display:none; }
+          
+          .exp-layout-tablet .timeline-spine-bg,
+          .exp-layout-tablet .timeline-spine-active { left: 50%; transform: translateX(-50%); }
+          
           .exp-tablet-row {
-            display:grid; grid-template-columns:40px 1fr;
-            align-items:flex-start; gap:16px;
-            width:100%; max-width:640px; position:relative; z-index:1;
+            display:grid; grid-template-columns:48px 1fr; align-items:flex-start; gap:24px;
+            width:100%; max-width:640px; position:relative; z-index:2;
           }
-          .exp-tablet-node {
-            display:flex; flex-direction:column; align-items:center; gap:4px;
-            padding-top:14px;
-          }
+          .exp-tablet-node { display:flex; flex-direction:column; align-items:center; gap:4px; padding-top:20px; }
           .exp-tablet-dot {
-            width:40px; height:40px; border-radius:50%;
-            display:flex; align-items:center; justify-content:center;
-            font-size:18px; position:relative; z-index:2;
+            width:48px; height:48px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+            font-size:20px; position:relative; z-index:3;
           }
           .exp-tablet-card { flex:1; }
         }
-        /* hide tablet layout on other breakpoints */
-        @media (max-width:767px)  { .exp-layout-tablet { display:none; } }
-        @media (min-width:1024px) { .exp-layout-tablet { display:none; } }
 
-        /* ══════════════════════════════════════════════
-           DESKTOP  >= 1024px
-           Alternating left/right timeline
-        ══════════════════════════════════════════════ */
+        /* 3. DESKTOP (>= 1024px) */
         @media (min-width:1024px) {
           .exp-layout-mobile  { display:none; }
-          .exp-layout-desktop {
-            display:block; position:relative;
-          }
-          /* center spine */
-          .exp-layout-desktop::before {
-            content:'';
-            position:absolute; left:50%; transform:translateX(-50%);
-            top:0; bottom:0; width:1px;
-            background:linear-gradient(
-              to bottom,
-              transparent 0%,
-              rgba(2,132,199,0.4) 10%,
-              rgba(124,58,237,0.5) 50%,
-              rgba(219,39,119,0.35) 90%,
-              transparent 100%
-            );
-            z-index:0;
-          }
+          .exp-layout-tablet  { display:none; }
+          .exp-layout-desktop { display:block; position:relative; padding: 2rem 0; }
+          
+          .exp-layout-desktop .timeline-spine-bg,
+          .exp-layout-desktop .timeline-spine-active { left: 50%; transform: translateX(-50%); }
+          
           .exp-desktop-row {
-            display:grid;
-            grid-template-columns:1fr 80px 1fr;
-            align-items:flex-start;
-            padding:0.75rem 0;
+            display:grid; grid-template-columns:1fr 100px 1fr; align-items:center; margin-bottom: 2rem;
           }
-          .exp-slot-l { display:flex; justify-content:flex-end; padding-right:2rem; }
-          .exp-slot-r { display:flex; justify-content:flex-start; padding-left:2rem; }
+          .exp-slot-l { display:flex; justify-content:flex-end; padding-right:3rem; }
+          .exp-slot-r { display:flex; justify-content:flex-start; padding-left:3rem; }
           .exp-slot-m {
-            display:flex; flex-direction:column; align-items:center;
-            gap:4px; padding-top:14px; position:relative; z-index:2;
+            display:flex; flex-direction:column; align-items:center; gap:8px; position:relative; z-index:3;
           }
           .exp-node {
-            width:48px; height:48px; border-radius:50%;
-            display:flex; align-items:center; justify-content:center;
-            font-size:20px; cursor:default;
+            width:56px; height:56px; border-radius:50%; display:flex; align-items:center; justify-content:center;
+            font-size:24px; cursor:default;
             transition:transform 0.4s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
           }
           .exp-node:hover { transform:scale(1.15) rotate(10deg); }
           .exp-node-lbl {
-            font-family:var(--font-display); font-size:9px;
-            font-weight:700; letter-spacing:0.1em; opacity:0.55;
+            font-family:var(--font-display); font-size:11px; font-weight:800; letter-spacing:0.15em; opacity:0.8;
           }
         }
 
-        /* orbs */
+        /* Background Parallax Orbs */
         .exp-orb {
-          position:absolute; border-radius:50%;
-          pointer-events:none; filter:blur(80px); z-index:0;
+          position:absolute; border-radius:50%; pointer-events:none; filter:blur(100px); z-index:0;
+          transition: transform 0.1s linear;
         }
       `}</style>
 
-      <section id="experience" ref={ref} className="relative py-24 overflow-hidden grid-bg"
+      <section id="experience" ref={sectionRef} className="relative py-20 lg:py-28 overflow-hidden grid-bg"
         style={{ background:"var(--bg-secondary)" }}>
 
-        {/* Orbs */}
-        <div className="exp-orb" style={{ width:460, height:460, top:"-80px", right:"-100px",
-          background:"radial-gradient(circle,rgba(2,132,199,0.06),transparent 70%)" }}/>
-        <div className="exp-orb" style={{ width:380, height:380, bottom:"-60px", left:"-80px",
-          background:"radial-gradient(circle,rgba(124,58,237,0.06),transparent 70%)" }}/>
+        {/* Ambient Parallax Orbs tied to Scroll */}
+        <div className="exp-orb hidden md:block" style={{ 
+          width:500, height:500, top: "10%", right: "-10%",
+          background:"radial-gradient(circle,rgba(2,132,199,0.08),transparent 70%)",
+          transform: `translateY(${scrollY * 0.15}px)`
+        }}/>
+        <div className="exp-orb hidden md:block" style={{ 
+          width:400, height:400, bottom: "20%", left: "-5%",
+          background:"radial-gradient(circle,rgba(124,58,237,0.08),transparent 70%)",
+          transform: `translateY(${scrollY * -0.1}px)`
+        }}/>
 
         <div className="relative z-10 max-w-7xl mx-auto px-5 lg:px-8">
 
           {/* ── Header ── */}
-          <div className={`exp-reveal ${visible?"in":""} text-center mb-16`}>
+          <div className="text-center mb-16 lg:mb-20">
             <div className="section-label justify-center mb-4">Work History</div>
-            <h2 style={{ fontFamily:"var(--font-display)", fontWeight:800, fontSize:"clamp(2rem,4vw,3rem)", color:"var(--text-primary)" }}>
+            <h2 style={{ fontFamily:"var(--font-display)", fontWeight:800, fontSize:"clamp(2.2rem,5vw,3.5rem)", color:"var(--text-primary)" }}>
               My{" "}
               <span style={{ background:"linear-gradient(135deg,#0284c7,#7c3aed)", WebkitBackgroundClip:"text", WebkitTextFillColor:"transparent", backgroundClip:"text" }}>
                 Experience
               </span>
             </h2>
-            {/* Stats */}
-            <div style={{ display:"flex", justifyContent:"center", gap:"2rem", flexWrap:"wrap", marginTop:"1.25rem" }}>
-              {[{ n:"5+", l:"Apps Shipped" },{ n:"1+", l:"Years Flutter" },{ n:"3+", l:"Client Projects" }].map(({ n, l })=>(
-                <div key={l} style={{ display:"flex", flexDirection:"column", alignItems:"center", gap:2 }}>
-                  <span className="exp-stat-num">{n}</span>
-                  <span className="exp-stat-lbl">{l}</span>
-                </div>
-              ))}
-            </div>
           </div>
 
           {/* ════════════════════════════
               MOBILE  (< 768px)
           ════════════════════════════ */}
           <div className="exp-layout-mobile">
-            {EXP.map((exp, i) => (
-              <div key={i} className="exp-mobile-row">
-                <div className="exp-mobile-dot" style={{
-                  background: exp.accent,
-                  boxShadow: `0 0 10px ${exp.accent}80`,
-                }}/>
-                <div className="exp-mobile-card">
-                  <ExpCard exp={exp} visible={visible} delay={0.06 + i * 0.1}/>
+            {/* Dynamic Scroll Spine */}
+            <div className="timeline-spine-bg" />
+            <div className="timeline-spine-active" style={{ height: `${scrollProgress * 100}%` }} />
+
+            {EXP.map((exp, i) => {
+              const isActive = scrollProgress > (i / EXP.length) * 0.8;
+              return (
+                <div key={i} className="exp-mobile-row">
+                  <div className="exp-mobile-dot" style={{
+                    background: isActive ? exp.accent : "var(--border-subtle)",
+                    boxShadow: isActive ? `0 0 15px ${exp.accent}80` : "none",
+                  }}/>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <ExpCard exp={exp} delay={0.1}/>
+                  </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* ════════════════════════════
               TABLET  (768px – 1023px)
           ════════════════════════════ */}
           <div className="exp-layout-tablet">
-            {EXP.map((exp, i) => (
-              <div key={i} className="exp-tablet-row">
-                {/* Node */}
-                <div className="exp-tablet-node">
-                  <div className="exp-tablet-dot" style={{
-                    background:`linear-gradient(135deg,${exp.accent}22,${exp.accent}0d)`,
-                    border:`1.5px solid ${exp.accent}40`,
-                    boxShadow:`0 0 0 5px ${exp.accent}12`,
-                  }}>
-                    {exp.icon}
+            {/* Dynamic Scroll Spine */}
+            <div className="timeline-spine-bg" />
+            <div className="timeline-spine-active" style={{ height: `${scrollProgress * 100}%` }} />
+
+            {EXP.map((exp, i) => {
+              const isActive = scrollProgress > (i / EXP.length) * 0.8;
+              return (
+                <div key={i} className="exp-tablet-row">
+                  <div className="exp-tablet-node">
+                    <div className="exp-tablet-dot" style={{
+                      background: isActive ? `linear-gradient(135deg,${exp.accent}30,${exp.accent}10)` : "var(--bg-card)",
+                      border:`2px solid ${isActive ? exp.accent : "var(--border-subtle)"}`,
+                      boxShadow: isActive ? `0 0 0 6px ${exp.accent}15, 0 0 20px ${exp.accent}40` : "none",
+                      transition: "all 0.4s ease"
+                    }}>
+                      <span style={{ opacity: isActive ? 1 : 0.3, transition: "opacity 0.4s" }}>{exp.icon}</span>
+                    </div>
+                  </div>
+                  <div className="exp-tablet-card">
+                    <ExpCard exp={exp} delay={0.1}/>
                   </div>
                 </div>
-                {/* Card */}
-                <div className="exp-tablet-card">
-                  <ExpCard exp={exp} visible={visible} delay={0.06 + i * 0.1}/>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
 
           {/* ════════════════════════════
               DESKTOP  (>= 1024px)
-              Alternating left / right
           ════════════════════════════ */}
           <div className="exp-layout-desktop">
+            {/* Dynamic Scroll Spine */}
+            <div className="timeline-spine-bg" />
+            <div className="timeline-spine-active" style={{ height: `${scrollProgress * 100}%` }} />
+
             {EXP.map((exp, i) => {
               const isLeft = i % 2 === 0;
+              const isActive = scrollProgress > (i / EXP.length) * 0.75;
+
               return (
                 <div key={i} className="exp-desktop-row">
                   {/* Left slot */}
                   <div className="exp-slot-l">
-                    {isLeft
-                      ? <ExpCard exp={exp} visible={visible} delay={0.06 + i * 0.1}/>
-                      : <div/>}
+                    {isLeft && <ExpCard exp={exp} delay={0.1}/>}
                   </div>
 
                   {/* Center node */}
                   <div className="exp-slot-m">
-                    <span className="exp-node-lbl" style={{ color:exp.accent }}>{exp.index}</span>
+                    <span className="exp-node-lbl" style={{ 
+                      color: isActive ? exp.accent : "var(--text-muted)",
+                      transition: "color 0.4s ease"
+                    }}>{exp.index}</span>
+                    
                     <div className="exp-node" style={{
-                      background:`linear-gradient(135deg,${exp.accent}22,${exp.accent}0d)`,
-                      border:`1.5px solid ${exp.accent}40`,
-                      boxShadow:`0 0 0 6px ${exp.accent}12, 0 0 24px ${exp.accent}20`,
+                      background: isActive ? `linear-gradient(135deg,${exp.accent}25,${exp.accent}0a)` : "var(--bg-card)",
+                      border:`2px solid ${isActive ? exp.accent : "var(--border-subtle)"}`,
+                      boxShadow: isActive ? `0 0 0 8px ${exp.accent}12, 0 0 30px ${exp.accent}30` : "none",
+                      transition: "all 0.5s cubic-bezier(0.34,1.56,0.64,1)"
                     }}>
-                      {exp.icon}
+                      <span style={{ 
+                        opacity: isActive ? 1 : 0.2, 
+                        filter: isActive ? "grayscale(0%)" : "grayscale(100%)",
+                        transition: "all 0.5s ease" 
+                      }}>{exp.icon}</span>
                     </div>
                   </div>
 
                   {/* Right slot */}
                   <div className="exp-slot-r">
-                    {!isLeft
-                      ? <ExpCard exp={exp} visible={visible} delay={0.06 + i * 0.1}/>
-                      : <div/>}
+                    {!isLeft && <ExpCard exp={exp} delay={0.1}/>}
                   </div>
                 </div>
               );
