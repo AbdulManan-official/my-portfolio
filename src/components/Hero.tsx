@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState, useMemo, useRef } from "react";
+import { useEffect, useState } from "react";
 import { Github, Linkedin, Mail, Phone as PhoneIcon, ArrowRight } from "lucide-react";
 
 /* ─── Data ─────────────────────────────────────────────────────────── */
@@ -17,14 +17,7 @@ const SOCIALS = [
 ];
 
 const SCREENS = [
-  { label: "Abdul Manan",              accent: "#0284c7", image: "/images/my1.png",     fit: "cover", pos: "center center", isSplash: true  },
-  { label: "Tasbeeh Max",              accent: "#a78bfa", image: "/images/tasbeeh.png", fit: "cover", pos: "top center",    isSplash: false },
-  { label: "VPN Max",                  accent: "#67e8f9", image: "/images/vpnmax.png",  fit: "cover", pos: "top center",    isSplash: false },
-  { label: "Video to Audio Converter", accent: "#6ee7b7", image: "/images/video.png",   fit: "cover", pos: "top center",    isSplash: false },
-  { label: "Parcel Delivery App",      accent: "#fb923c", image: "/images/parcel.png",  fit: "cover", pos: "top center",    isSplash: false },
-  { label: "BNPL E-Commerce App",      accent: "#c084fc", image: "/images/BNPL.png",    fit: "cover", pos: "top center",    isSplash: false },
-  { label: "Turbo VPN",                accent: "#34d399", image: "/images/turbo.png",   fit: "cover", pos: "top center",    isSplash: false },
-  { label: "Shield VPN",               accent: "#60a5fa", image: "/images/shield.png",  fit: "cover", pos: "top center",    isSplash: false },
+  { label: "Abdul Manan", accent: "#0284c7", image: "/images/my1.png", fit: "cover", pos: "center center", isSplash: true  },
 ];
 
 const JOURNEY = [
@@ -53,47 +46,20 @@ function SplashOverlay() {
 }
 
 /* ─── Phone Frame ───────────────────────────────────────────────────── */
-function PhoneShowcase({ screenIdx, onTap }: { screenIdx: number; onTap: () => void }) {
-  const [prevIdx,   setPrevIdx]   = useState(screenIdx);
-  const [animating, setAnimating] = useState(false);
-  const [direction, setDirection] = useState<"left" | "right">("left");
-  const [pressed,   setPressed]   = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  useEffect(() => {
-    if (screenIdx === prevIdx) return;
-    setDirection(screenIdx > prevIdx ? "left" : "right");
-    setAnimating(true);
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => { setPrevIdx(screenIdx); setAnimating(false); }, 750);
-  }, [screenIdx, prevIdx]);
-
-  const curr = SCREENS[screenIdx];
-  const prev = SCREENS[prevIdx];
+function PhoneShowcase() {
+  const curr = SCREENS[0];
 
   return (
-    <div className="phone-outer" aria-label={`App showcase: ${curr.label}`}>
+    <div className="phone-outer" aria-label={`Showcase: ${curr.label}`}>
       <div className="phone-glow" style={{ background: curr.accent }} />
-      <div
-        className="phone-frame"
-        role="button" tabIndex={0} aria-label="Tap to change app"
-        style={{ transform: pressed ? "scale(0.965)" : "scale(1)" }}
-        onClick={() => { setPressed(true); setTimeout(() => setPressed(false), 200); onTap(); }}
-        onKeyDown={e => e.key === "Enter" && onTap()}
-      >
+      <div className="phone-frame">
         <div className="btn-power" /><div className="btn-vol-up" /><div className="btn-vol-dn" />
         <div className="phone-screen-wrap">
           <div className="dynamic-island">
             <div className="island-dot" style={{ background: curr.accent }} />
           </div>
           <div className="screen-viewport">
-            {animating && (
-              <div key={`prev-${prevIdx}`} className={`screen-img screen-exit-${direction}`}>
-                <img src={prev.image} alt={prev.label} style={{ objectFit: prev.fit as any, objectPosition: prev.pos }} />
-                {prev.isSplash && <SplashOverlay />}
-              </div>
-            )}
-            <div key={`curr-${screenIdx}`} className={animating ? `screen-img screen-enter-${direction}` : "screen-img screen-idle"}>
+            <div className="screen-img screen-idle">
               <img src={curr.image} alt={curr.label} style={{ objectFit: curr.fit as any, objectPosition: curr.pos }} />
               {curr.isSplash && <SplashOverlay />}
             </div>
@@ -106,11 +72,6 @@ function PhoneShowcase({ screenIdx, onTap }: { screenIdx: number; onTap: () => v
       <div className="phone-label-box">
         <div className="phone-label-dot" style={{ background: curr.accent, boxShadow: `0 0 10px ${curr.accent}` }} />
         <span>{curr.label}</span>
-      </div>
-
-      <div className="phone-tap-hint" onClick={onTap}>
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 19V5M5 12l7-7 7 7" /></svg>
-        <span>Tap to change</span>
       </div>
     </div>
   );
@@ -147,7 +108,7 @@ function HeroStyles() {
       /* ─── Phone Mockup ─── */
       .phone-outer { position: relative; width: 270px; display: flex; flex-direction: column; align-items: center; gap: 16px; z-index: 10; }
       .phone-glow  { position: absolute; width: 200px; height: 320px; top: 60px; left: 50%; transform: translateX(-50%); border-radius: 50%; filter: blur(70px); opacity: 0.4; pointer-events: none; transition: background 0.7s ease; }
-      .phone-frame { position: relative; width: 270px; height: 550px; border-radius: 46px; background: linear-gradient(145deg, #1e2029, #0a0b10); box-shadow: 0 0 0 1.5px rgba(255,255,255,0.1), inset 0 2px 4px rgba(255,255,255,0.2), 0 30px 60px rgba(0,0,0,0.5); cursor: pointer; transition: transform 0.2s cubic-bezier(0.34,1.56,0.64,1); }
+      .phone-frame { position: relative; width: 270px; height: 550px; border-radius: 46px; background: linear-gradient(145deg, #1e2029, #0a0b10); box-shadow: 0 0 0 1.5px rgba(255,255,255,0.1), inset 0 2px 4px rgba(255,255,255,0.2), 0 30px 60px rgba(0,0,0,0.5); }
       .btn-power  { position: absolute; right: -3px; top: 110px; width: 3px; height: 60px; border-radius: 0 3px 3px 0; background: #333; }
       .btn-vol-up { position: absolute; left: -3px; top: 90px;  width: 3px; height: 35px; border-radius: 3px 0 0 3px; background: #333; }
       .btn-vol-dn { position: absolute; left: -3px; top: 135px; width: 3px; height: 35px; border-radius: 3px 0 0 3px; background: #333; }
@@ -161,22 +122,8 @@ function HeroStyles() {
       .screen-img { position: absolute; inset: 0; width: 100%; height: 100%; }
       .screen-img img { width: 100%; height: 100%; display: block; }
       
-      /* Sliding Animations */
-      .screen-idle        { animation: none; }
-      .screen-enter-left  { animation: slideInLeft   0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-      .screen-exit-left   { animation: slideOutLeft  0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-      .screen-enter-right { animation: slideInRight  0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-      .screen-exit-right  { animation: slideOutRight 0.6s cubic-bezier(0.22, 1, 0.36, 1) forwards; }
-      
-      @keyframes slideInLeft   { from { transform: translateX(100%); } to { transform: translateX(0); } }
-      @keyframes slideOutLeft  { from { transform: translateX(0); filter: brightness(0.5); } to { transform: translateX(-40%); filter: brightness(0.2); } }
-      @keyframes slideInRight  { from { transform: translateX(-100%); } to { transform: translateX(0); } }
-      @keyframes slideOutRight { from { transform: translateX(0); filter: brightness(0.5); } to { transform: translateX(40%); filter: brightness(0.2); } }
-
       .phone-label-box { display: flex; align-items: center; gap: 8px; font-family: var(--font-display); font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--hero-text-primary); }
       .phone-label-dot { width: 8px; height: 8px; border-radius: 50%; transition: all 0.4s; }
-      .phone-tap-hint { display: flex; align-items: center; gap: 6px; padding: 6px 14px; border-radius: 100px; background: var(--hero-glass-bg); border: 1px solid var(--hero-glass-border); font-family: var(--font-display); font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--hero-text-muted); cursor: pointer; backdrop-filter: blur(10px); transition: background 0.3s; }
-      .phone-tap-hint:hover { background: var(--hero-glass-hover); color: var(--hero-text-primary); }
 
       /* ─── Hero Content Left ─── */
       .hero-content { display: flex; flex-direction: column; gap: 24px; z-index: 10; position: relative; }
@@ -272,22 +219,13 @@ function HeroStyles() {
 /* ─── Main Hero ─────────────────────────────────────────────────────── */
 export default function Hero() {
   const [mounted,   setMounted]   = useState(false);
-  const [screen,    setScreen]    = useState(0);
   const [heroReady, setHeroReady] = useState(false);
   const [mouse,     setMouse]     = useState({ x: 0, y: 0 });
-  const [paused,    setPaused]    = useState(false);
 
   useEffect(() => {
     setMounted(true);
     setTimeout(() => setHeroReady(true), 100);
   }, []);
-
-  useEffect(() => {
-    if (!mounted || paused) return;
-    const delay = screen === 0 ? 8000 : 4000;
-    const t = setTimeout(() => setScreen(s => (s + 1) % SCREENS.length), delay);
-    return () => clearTimeout(t);
-  }, [mounted, paused, screen]);
 
   useEffect(() => {
     if (!mounted || window.innerWidth < 1024) return;
@@ -298,12 +236,6 @@ export default function Hero() {
     window.addEventListener("mousemove", fn);
     return () => window.removeEventListener("mousemove", fn);
   }, [mounted]);
-
-  const handleTap = () => {
-    setScreen(s => (s + 1) % SCREENS.length);
-    setPaused(true);
-    setTimeout(() => setPaused(false), 4000);
-  };
 
   if (!mounted) {
     return (
@@ -332,8 +264,8 @@ export default function Hero() {
 
           {/* MOBILE PHONE SLOT (Shows on top on small screens) */}
           <div className="mobile-phone-slot">
-            <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.1s" }} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
-              <PhoneShowcase screenIdx={screen} onTap={handleTap} />
+            <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.1s" }}>
+              <PhoneShowcase />
             </div>
           </div>
 
@@ -431,9 +363,9 @@ export default function Hero() {
 
             {/* ══ RIGHT COLUMN — DESKTOP PHONE ══ */}
             <div className="desktop-phone-slot">
-              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.3s" }} onMouseEnter={() => setPaused(true)} onMouseLeave={() => setPaused(false)}>
+              <div className={`h-reveal ${heroReady ? "ready" : ""}`} style={{ transitionDelay: "0.3s" }}>
                 <div className="phone-float" style={{ transform: `rotateY(${mouse.x}deg) rotateX(${-mouse.y}deg)`, transition: "transform 0.3s ease-out" }}>
-                  <PhoneShowcase screenIdx={screen} onTap={handleTap} />
+                  <PhoneShowcase />
                 </div>
               </div>
             </div>
